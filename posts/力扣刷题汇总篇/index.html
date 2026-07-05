@@ -84,7 +84,7 @@ nums 已按 非递减顺序 排序
 sort时间复杂度on（logn）</p>
 <h4 id="2双指针">（2）双指针</h4>
 <p><font color=Crimson>因为原来数组是排好顺序的，平方之后最小值（负数）有可能变为最大值，但是平方后的最大值一定在原数组的两端 </font></p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/ebe960bef2592c42a2a32d85ac138cbc.gif#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-001.gif" alt="刷题笔记配图"></p>
 <h3 id="3代码-1">3、代码</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> sortedSquares</span><span style="color:#E1E4E8">(self, nums: List[</span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">]) -> List[</span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">]:</span></span>
@@ -108,7 +108,7 @@ sort时间复杂度on（logn）</p>
 <h2 id="lc209-长度最小的子数组">LC209 长度最小的子数组</h2>
 <h3 id="题目">题目</h3>
 <p>找到正整数数组nums的总和大于等于target的<font color=CornflowerBlue> 连续子数组</font>，返回字数组长度，不存在，返回0。
-<img src="https://i-blog.csdnimg.cn/blog_migrate/dfc49fd521420ea020154965c615666c.png" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-002.png" alt="刷题笔记配图"></p>
 <h3 id="代码python">代码（python）</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> minSubArrayLen</span><span style="color:#E1E4E8">(self, target: </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">, nums: List[</span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">]) -> </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">:</span></span>
@@ -140,13 +140,13 @@ sort时间复杂度on（logn）</p>
 <h2 id="lc59螺旋矩阵2medium重点">LC59螺旋矩阵2（medium）重点</h2>
 <h3 id="题目描述">题目描述</h3>
 <blockquote>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/e75197a925504505612223658e9fa62d.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-003.png" alt="刷题笔记配图"></p>
 </blockquote>
 <h3 id="方法循环不变量">方法：循环不变量</h3>
 <p>在二分法中的循环不变量就是取得区间的两端是开区间还是闭区间，所以分为了两种方法<font color=red>双闭区间法</font>和<font color=red>左闭右开区间</font>
 :question:在这里这种非常复杂的循环问题，就一定要明确每次循环处理的到底是那一部分?
 :heavy_check_mark:<font color=#990099>我们每次只处理每一条边的第一个节点到倒数第二个节点</font>
-<img src="https://i-blog.csdnimg.cn/blog_migrate/18e8a7bc7986c09f9f57e1f32a157126.png#pic_center" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-004.png" alt="刷题笔记配图">
 那么每一个循环将依次处理四条边：</p>
 <ul>
 <li>上行从左到右</li>
@@ -165,7 +165,7 @@ sort时间复杂度on（logn）</p>
 <li>…
 可以知道无论n是偶数还是奇数，旋转次数= <font color=red>$n//2$</font>，但是当n为奇数的时候，会在矩阵的最中心空着一个格子，单独填入就行
 具体的处理流程：
-<img src="https://i-blog.csdnimg.cn/blog_migrate/d20fb3da6ffc20225727146a2199df3b.jpeg" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-005.jpeg" alt="刷题笔记配图">
 可以对照着看代码就会很清晰了</li>
 </ol>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
@@ -326,13 +326,13 @@ sort时间复杂度on（logn）</p>
 <h3 id="题目描述-2">题目描述</h3>
 <blockquote>
 <p>给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。
-<img src="https://i-blog.csdnimg.cn/blog_migrate/71a68c460955173f2962d28a8e00a2ac.png#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-006.png" alt="刷题笔记配图"></p>
 </blockquote>
 <h3 id="思路">思路</h3>
 <p>链表移除某一个节点只需要将上一个节点的next指针指向下一个节点就行了
-<img src="https://i-blog.csdnimg.cn/blog_migrate/0977f8cd091040fa6ec5a315eab97c42.png#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-007.png" alt="刷题笔记配图"></p>
 <p>但是如果要移除头节点，头结点可是没有上一个节点的，所以要把头节点直接指向头节点的下一节点。
-<img src="https://i-blog.csdnimg.cn/blog_migrate/312ba6cb4a64589f8a9d462a399c4eac.png#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-008.png" alt="刷题笔记配图"></p>
 <p>所以就要把所有节点分成两种情况：<font color=red>是头节点</font>和<font color=green>不是头结点</font></p>
 <p>但是也可以用一种情况来实现删除操作：<font color=red>加入虚拟头结点</font> ，这样头结点也变成了一般节点。</p>
 <h3 id="代码-1">代码</h3>
@@ -363,7 +363,7 @@ sort时间复杂度on（logn）</p>
 <p>:bulb:为什么要循环判断头结点是否是目标节点？</p>
 <p>因为如果链表是1-&gt;1-&gt;1-&gt;null，val = 1，那么就需要循环的删除头节点，所以不能简单的判断，而应该是while</p>
 <p>:bulb:如果删除规则是前一个节点的next指针指向下一个节点，那为什么不把​cur设置为当前要被删除的节点?
-<img src="https://i-blog.csdnimg.cn/blog_migrate/3258178452513de419e64aaedeafca80.jpeg#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-009.jpeg" alt="刷题笔记配图"></p>
 <h4 id="使用虚拟头节点">使用虚拟头节点</h4>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Definition for singly-linked list.</span></span>
 <span class="line"><span style="color:#6A737D"># class ListNode:</span></span>
@@ -482,10 +482,10 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h3 id="题目描述-3">题目描述</h3>
 <blockquote>
 <p>给你单链表的头节点 <code>head</code> ，请你反转链表，并返回反转后的链表。</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/108e40b28d8a02e98df7b91652142614.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-010.png" alt="刷题笔记配图"></p>
 </blockquote>
 <h3 id="思路1双指针">思路1：双指针</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/08d8d11fa5aa664577b32bfd88012832.jpeg#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-011.jpeg" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Definition for singly-linked list.</span></span>
 <span class="line"><span style="color:#6A737D"># class ListNode:</span></span>
 <span class="line"><span style="color:#6A737D">#     def __init__(self, val=0, next=None):</span></span>
@@ -507,7 +507,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <span class="line"><span style="color:#6A737D">        # 时间复杂度 O（n）</span></span>
 <span class="line"><span style="color:#6A737D">        # 空间复杂度O（1）</span></span></code></pre>
 <h3 id="思路2递归根据双指针写出">思路2：递归（根据双指针写出）</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/cef1cd8143c253071140419003b2683e.jpeg#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-012.jpeg" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Definition for singly-linked list.</span></span>
 <span class="line"><span style="color:#6A737D"># class ListNode:</span></span>
 <span class="line"><span style="color:#6A737D">#     def __init__(self, val=0, next=None):</span></span>
@@ -533,7 +533,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h3 id="题目描述-4">题目描述</h3>
 <p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 <code>null</code> 。</p>
 <h3 id="思路1双指针求长度同时出发">思路1：双指针（求长度，同时出发）</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/92b62fdc6a9b762d2893757dccc5523f.jpeg" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-013.jpeg" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Definition for singly-linked list.</span></span>
 <span class="line"><span style="color:#6A737D"># class ListNode:</span></span>
 <span class="line"><span style="color:#6A737D">#     def __init__(self, x):</span></span>
@@ -569,7 +569,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <span class="line"><span style="color:#E1E4E8">            curB </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> curB.next</span></span>
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> curA </span></span></code></pre>
 <h3 id="思路2双指针等比例法">思路2：双指针（等比例法）</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/173f648e312b75c679dfa8b0e8378dbe.jpeg" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-014.jpeg" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Definition for singly-linked list.</span></span>
 <span class="line"><span style="color:#6A737D"># class ListNode:</span></span>
 <span class="line"><span style="color:#6A737D">#     def __init__(self, x):</span></span>
@@ -624,13 +624,13 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <ul>
 <li>
 <p><font color=red>删除节点：</font> 和LC707一样</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/b498fe4145054890684546cf069006b1.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-015.png" alt="刷题笔记配图"></p>
 <p>:bulb:创建虚拟头结点<code>dummyhead</code>​，目的是让头节点也变成一般节点</p>
 <p>:bulb:创建一个<code>cur</code>指针指向要被删除的节点的前一个节点</p>
 </li>
 <li>
 <p><font color=red>插入节点：</font></p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/2f20aece6dfe43ef339269a5975ec2ba.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-016.png" alt="刷题笔记配图"></p>
 </li>
 </ul>
 <p>​	:bulb:创建一个<code>cur</code>指针指向要插入位置的节点的前一个节点</p>
@@ -711,13 +711,13 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h3 id="题目描述-6">题目描述</h3>
 <blockquote>
 <p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/a7f8e8cbeb776e9c62ff86a8267859a8.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-017.png" alt="刷题笔记配图"></p>
 </blockquote>
 <h3 id="思路-2">思路</h3>
 <ul>
 <li>交换节点的步骤</li>
 </ul>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/e26f31ad055bfc7abd5ce2bf773c1bd8.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-018.png" alt="刷题笔记配图"></p>
 <ul>
 <li>里面的细节分析</li>
 </ul>
@@ -768,13 +768,13 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h3 id="题目描述-7">题目描述</h3>
 <blockquote>
 <p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/41d837a255e3185e90ca5d1c7076048d.jpeg" alt=""></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-019.jpeg" alt="刷题笔记配图"></p>
 </blockquote>
 <h3 id="思路-3">思路</h3>
 <p>:heavy_heart_exclamation:<font color=red><strong>快慢指针</strong></font>:heavy_heart_exclamation:</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/a3e8e6583011afb25271244a316b3802.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-020.png" alt="刷题笔记配图"></p>
 <p>动图：</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/bec6093ec56983f821f969998e389b38.gif#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-021.gif" alt="刷题笔记配图"></p>
 <ul>
 <li>里面的细节分析</li>
 </ul>
@@ -813,12 +813,12 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <hr>
 <h2 id="lc141环形链表easy">LC141环形链表(easy)</h2>
 <h3 id="题目描述-8">题目描述</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/06c725718a63c34db1dae743c99aa15e.png" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-022.png" alt="刷题笔记配图"></p>
 <h3 id="方法快慢指针">方法：快慢指针</h3>
 <h4 id="1思路">（1）思路</h4>
 <p>使用快慢指针特性：每轮移动之后两者的距离会加一。
 当一个链表有环时，快慢指针都会陷入环中进行无限次移动，然后变成了追及问题。想象一下在操场跑步的场景，只要一直跑下去，快的总会追上慢的。
-<img src="https://i-blog.csdnimg.cn/blog_migrate/e77caf27dc691fe002a498d738346fe1.gif#pic_center" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-023.gif" alt="刷题笔记配图">
 :boom: ==如果存在环，如何判断环的长度呢？==
 快慢指针相遇后继续移动，直到第二次相遇。两次相遇间的移动次数即为环的长度。</p>
 <h4 id="2python代码">（2）python代码</h4>
@@ -839,7 +839,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> False</span><span style="color:#E1E4E8">         </span></span></code></pre>
 <h4 id="3复杂度分析">（3）复杂度分析：</h4>
 <blockquote>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/23a4e5864f8bbcd3b491752a92190452.png" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-024.png" alt="刷题笔记配图"></p>
 </blockquote>
 <hr>
 <h2 id="lc142环形链表2medium">LC142环形链表2（medium）</h2>
@@ -851,9 +851,9 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h3 id="方法快慢指针-1">方法：快慢指针</h3>
 <h4 id="1思路-1">（1）思路</h4>
 <p><font color=red><strong>如果有环，如何找到这个环的入口</strong></font>
-<img src="https://i-blog.csdnimg.cn/blog_migrate/7a605a18c6fc89152d4818258bffc731.jpeg" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-025.jpeg" alt="刷题笔记配图">
 :heart::heart::heart:$x=z$意味着：<font color=red>从头结点出发一个指针，从相遇节点 也出发一个指针，这两个指针每次只走一个节点， 那么当这两个指针相遇的时候就是 环形入口的节点。</font>
-<img src="https://i-blog.csdnimg.cn/blog_migrate/94b1f1292fe1522a8f189daa702e054e.gif#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-026.gif" alt="刷题笔记配图"></p>
 <h4 id="2代码">（2）代码</h4>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Definition for singly-linked list.</span></span>
 <span class="line"><span style="color:#6A737D"># class ListNode:</span></span>
@@ -1064,7 +1064,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h3 id="2-思路-2">2. 思路</h3>
 <h3 id="1双指针">（1）双指针</h3>
 <p>定义两个指针（也可以说是索引下标），一个从字符串前面，一个从字符串后面，两个指针同时向中间移动，并交换元素</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/5155e5dc976dfa1aadb06327dffc87f2.gif" alt=""></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-027.gif" alt="刷题笔记配图"></p>
 <h4 id="code">code</h4>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> reverseString</span><span style="color:#E1E4E8">(self, s: List[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">]) -> </span><span style="color:#79B8FF">None</span><span style="color:#E1E4E8">:</span></span>
@@ -1163,7 +1163,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h1 id="栈和队列篇">栈和队列篇</h1>
 <h2 id="0粗解栈和队列">0、粗解栈和队列</h2>
 <h3 id="1栈先进后出">（1）栈：先进后出</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/b7b7c9de45110cae27f7e88c511f64c1.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-028.png" alt="刷题笔记配图"></p>
 <h3 id="2栈操作时间复杂度">（2）栈操作时间复杂度</h3>
 <table>
 <thead>
@@ -1219,7 +1219,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <span class="line"><span style="color:#E1E4E8">	temp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stack.pop()</span></span>
 <span class="line"><span style="color:#6A737D">	# 对temp进行操作</span></span></code></pre>
 <h3 id="4队列先进先出">（4）队列：先进先出</h3>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/a2b64a6b7af874807a72f53428045ba7.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-029.png" alt="刷题笔记配图"></p>
 <h3 id="5队列操作时间复杂度--链表">（5）队列操作时间复杂度 = 链表</h3>
 <table>
 <thead>
@@ -1250,7 +1250,7 @@ void deleteAtIndex(int index) 如果下标有效，则删除链表中下标为 i
 <h2 id="6python中队列的操作">（6）python中队列的操作</h2>
 <p><font color=Crimson>collections.deque </font></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> collections </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> deque</span></span></code></pre>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/c6b71d432873aa348a252724d752fdde.jpeg#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-030.jpeg" alt="刷题笔记配图"></p>
 <ul>
 <li>获取出队元素：deque[0]</li>
 <li>获取入队元素：deque[-1]</li>
@@ -1287,7 +1287,7 @@ queue.pop();
 <strong>queue.pop();注意此时的输出栈的操作</strong>
 queue.pop();
 queue.empty();</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/0aa0c37627e97cdbd1e3496de9c6a6db.gif#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-031.gif" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> MyQueue</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#79B8FF"> __init__</span><span style="color:#E1E4E8">(self):</span></span>
 <span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.stackin </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
@@ -1351,7 +1351,7 @@ queue.empty();</p>
 <span class="line"><span style="color:#E1E4E8">queue.pop();    </span></span>
 <span class="line"><span style="color:#E1E4E8">queue.pop();    </span></span>
 <span class="line"><span style="color:#E1E4E8">queue.empty();    </span></span></code></pre>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/b198a4830d382d052f215482a578a505.gif#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-032.gif" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> collections </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> deque</span></span>
 <span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> MyStack</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#79B8FF"> __init__</span><span style="color:#E1E4E8">(self):</span></span>
@@ -1493,7 +1493,7 @@ queue.empty();</p>
 </blockquote>
 <h3 id="思路-5">思路</h3>
 <p><strong>创建一个栈：</strong> 存放遍历过的元素，当遍历当前的这个元素的时候，去栈里看一下我们是不是遍历过相同数值的相邻元素。
-<img src="https://i-blog.csdnimg.cn/blog_migrate/903c060d472b4753aaa7d463637667f7.gif#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-033.gif" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> removeDuplicates</span><span style="color:#E1E4E8">(self, s: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#6A737D">        # 初始化栈，用来保存不是重复项的元素</span></span>
@@ -1521,7 +1521,7 @@ queue.empty();</p>
 </blockquote>
 <h3 id="思路-6">思路</h3>
 <p>和有效的括号以及删除相邻重复项一样，也是个<font color=red>对对碰</font>问题，就是遇到摸一个元素判断是“加减乘除”符号就从栈里面取出<font color=deepskyblue>两个</font>元素进行运算，再把运算的结果放入栈中。</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/d914606798414e67799637ed57410ed9.gif#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-034.gif" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">: </span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> evalRPN</span><span style="color:#E1E4E8">(self, tokens: List[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">]) -> </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#6A737D">        # 创建一个字典从来存放加减乘除运算</span></span>
@@ -1544,7 +1544,7 @@ queue.empty();</p>
 <h3 id="题目描述-15">题目描述</h3>
 <blockquote>
 <p>给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
-<img src="https://i-blog.csdnimg.cn/blog_migrate/1fd3d7a431130e82168edf4017e335f4.png#pic_center" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-035.png" alt="刷题笔记配图"></p>
 </blockquote>
 <h3 id="思路-7">思路</h3>
 <p>我先写一下我的思路历程：</p>
@@ -1559,9 +1559,9 @@ queue.empty();</p>
 :one:push(value)：加入队列的元素，在加入时要判断从队列头部一直到队列尾部，是否队列中的值是大于value的，如果不是，就将队列中的元素移除（首部移除pop）<font color=red>保证队列是单调的，且最大值元素放在了队尾的位置</font>
 :two:pop(value)：移除队列的元素，正常是应该移除掉出窗口的内个元素，但是内个元素有可能已经被push移除掉了，<font color=red>只有当出窗口的内个元素就是最大值元素的时候</font>，才需要此时的pop进行删除
 :three:maxValue()：获取最大值元素，<font color=red>就是队尾元素</font>
-<img src="https://i-blog.csdnimg.cn/blog_migrate/0ab6cb807f9dcdb3cecb66b647c8e0e3.gif#pic_center" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-036.gif" alt="刷题笔记配图">
 具体流程：
-![在这里插入图片描述](<a href="https://i-blog.csdnimg.cn/blog_migrate/3d63da582f8fc44f82b69bfa10fa86bf.jpeg#pic_center">https://i-blog.csdnimg.cn/blog_migrate/3d63da582f8fc44f82b69bfa10fa86bf.jpeg#pic_center</a> =400x600)</li>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-037.jpeg" alt="刷题笔记配图"></li>
 </ul>
 </li>
 </ul>
@@ -1637,7 +1637,7 @@ queue.empty();</p>
 <h1 id="二叉树篇">二叉树篇</h1>
 <h2 id="0基础">0、基础</h2>
 <h3 id="深度和高度">深度和高度</h3>
-<p><img src="https://i-blog.csdnimg.cn/direct/f906bb362e8c475fb74e3b47af6185c3.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-038.png" alt="刷题笔记配图"></p>
 <h3 id="满二叉树和完全二叉树">满二叉树和完全二叉树</h3>
 <p>满二叉树：除了根节点，每个节点都有两个孩子
 完全二叉树：除了最底下的右侧节点可能没填满外，其余每层节点数都达到最大值。</p>
@@ -1657,12 +1657,12 @@ queue.empty();</p>
 <li>前序遍历：中左右</li>
 <li>中序遍历：左中右</li>
 <li>后序遍历：左右中
-<img src="https://i-blog.csdnimg.cn/direct/480f3ea6025a42af8fb96fcfad4639c0.png" alt="在这里插入图片描述"></li>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-039.png" alt="刷题笔记配图"></li>
 </ul>
 <h2 id="递归遍历">递归遍历</h2>
 <h3 id="前序递归遍历144-二叉树的前序遍历">前序递归遍历—144. 二叉树的前序遍历</h3>
 <p>==题目链接：==<a href="https://leetcode.cn/problems/binary-tree-preorder-traversal/description/">添加链接描述</a>
-<img src="https://i-blog.csdnimg.cn/direct/2611e31f2f2a422e9d197d00084d7a6c.png" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-040.png" alt="刷题笔记配图"></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> preorderTraversal</span><span style="color:#E1E4E8">(self, root: Optional[TreeNode]) -> List[</span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">]:</span></span>
 <span class="line"><span style="color:#F97583">        def</span><span style="color:#B392F0"> dfs</span><span style="color:#E1E4E8">(node,res):</span></span>
@@ -1704,14 +1704,14 @@ queue.empty();</p>
 <span class="line"><span style="color:#E1E4E8">                stack.append(node.left)</span></span>
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> vec</span></span></code></pre>
 <h2 id="层序遍历">层序遍历</h2>
-<p><img src="https://i-blog.csdnimg.cn/direct/a428b9ac74f2446faf7c636b4bf0f25e.png" alt="在这里插入图片描述">
-<img src="https://i-blog.csdnimg.cn/direct/4200db659d2a48519e80c995290d2bc8.png" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-041.png" alt="刷题笔记配图">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-042.png" alt="刷题笔记配图"></p>
 <h2 id="116-填充每个节点的下一个右侧节点指针">116. 填充每个节点的下一个右侧节点指针</h2>
 <p>==题目链接：==<a href="https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/description/">
 </a></p>
 <h3 id="1题目描述-4">1、题目描述</h3>
 <blockquote>
-<p><img src="https://i-blog.csdnimg.cn/direct/0a2c565f1194408588873a4485f501a7.png" alt="在这里插入图片描述">输入：root = [1,2,3,4,5,6,7]
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-043.png" alt="刷题笔记配图">输入：root = [1,2,3,4,5,6,7]
 输出：[1,#,2,3,#,4,5,6,7,#]
 解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。序列化的输出按层序遍历排列，同一层节点由 next 指针连接，‘#’ 标志着每一层的结束。</p>
 </blockquote>
@@ -1756,7 +1756,7 @@ queue.empty();</p>
 <blockquote>
 <p>给你一棵二叉树的根节点 root ，翻转这棵二叉树，并返回其根节点。
 示例 1：
-<img src="https://i-blog.csdnimg.cn/direct/24f9e6400fb04ff6bb98ce6b8a15e007.png" alt="在这里插入图片描述">输入：root = [4,2,7,1,3,6,9]
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-044.png" alt="刷题笔记配图">输入：root = [4,2,7,1,3,6,9]
 输出：[4,7,2,9,6,3,1]</p>
 </blockquote>
 <h3 id="2思路-3">2、思路</h3>
@@ -1784,15 +1784,15 @@ queue.empty();</p>
 <blockquote>
 <p>给你一个二叉树的根节点 <code>root</code> ， 检查它是否轴对称。
 <strong>示例 1：</strong>
-<img src="https://i-blog.csdnimg.cn/direct/22470d495fac4f48bd7edffefa1789c0.png" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-045.png" alt="刷题笔记配图">
 输入：root = [1,2,2,3,4,4,3]
 输出：true</p>
 </blockquote>
 <h3 id="2思路-4">2、思路</h3>
-<p>❌最开始的错误思路：后续遍历，把得到的数组出去最后一个看看是否是对称的，但是这样的话会判断出错这样的情况：<img src="https://i-blog.csdnimg.cn/direct/15bbaacc50f14700a71dec16238a7aaf.png" alt="在这里插入图片描述">
+<p>❌最开始的错误思路：后续遍历，把得到的数组出去最后一个看看是否是对称的，但是这样的话会判断出错这样的情况：<img src="/xiaoruhome/assets/posts/leetcode-summary/image-046.png" alt="刷题笔记配图">
 ✅判断节点的左右子树是否能相互翻转
-<img src="https://i-blog.csdnimg.cn/direct/4e50d0ee183441aca1ba76c352996cbc.png" alt="在这里插入图片描述">
-<img src="https://i-blog.csdnimg.cn/direct/96886173def74beca9fb7d5a867198b8.png" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-047.png" alt="刷题笔记配图">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-048.png" alt="刷题笔记配图"></p>
 <h3 id="3code-2">3、code</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#6A737D">    # 判断对称二叉树：判断根节点的左右树是否是可以翻转的->也就是判断两颗数的外侧和内侧的节点值是否是相等的</span></span>
@@ -1858,7 +1858,7 @@ queue.empty();</p>
 </blockquote>
 <p>那求最小高度就应该是：$min(左子树的高度，右子树的高度)+1$
 😡要单独考虑左子树或者右子树高度为0的情况
-<img src="https://i-blog.csdnimg.cn/direct/55426996d3d94a738ffec9d39cafde2f.png" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-049.png" alt="刷题笔记配图"></p>
 <h3 id="3code-4">3、code</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> minDepth</span><span style="color:#E1E4E8">(self, root: Optional[TreeNode]) -> </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">:</span></span>
@@ -1882,7 +1882,7 @@ queue.empty();</p>
 <blockquote>
 <p>给定两个整数 n 和 k，返回 1 … n 中所有可能的 k 个数的组合。
 示例: 输入: n = 4, k = 2 输出: [ [2,4], [3,4], [2,3], [1,2], [1,3], [1,4], ]
-<img src="https://i-blog.csdnimg.cn/direct/fd78e3099fed46aca4bebcea0d6f3413.png" alt="在这里插入图片描述"></p>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-050.png" alt="刷题笔记配图"></p>
 </blockquote>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8">  typing </span><span style="color:#F97583">import</span><span style="color:#E1E4E8">  List</span></span>
 <span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
@@ -1914,7 +1914,7 @@ queue.empty();</p>
 <p>🌟在<code>for i in range(startindex, n+1):</code>这里面的startindex保证的是树层去重（<font color=CornflowerBlue>防止出现[1,2]和[2,1]的情况，组合问题特性 </font>）
 🌟在<code> self.backtracking(n, k, i+1)</code>：这里面的<code>i+1</code>保证的是树枝去重（<font color=CornflowerBlue>防止出现[1,1]的情况，也就是同一个元素取了两次，这是一个元素只能出现一次的特性 </font>）</p>
 <p>😙剪枝优化：当目前剩余可以选择的元素不够k的时候就没必要继续了，<code>n - i +1 + len(path)&gt;= k  -&gt; i &lt;= n - k + 1 +len(path)</code>
-<img src="https://i-blog.csdnimg.cn/direct/5cbf19e87ee245bda80850f295598e0f.png" alt="在这里插入图片描述">
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-051.png" alt="刷题笔记配图">
 ❤️为什么是path[:]不是path？</p>
 <ul>
 <li>浅拷贝vs引用</li>
@@ -1928,7 +1928,7 @@ queue.empty();</p>
 <ul>
 <li>所有数字都是正整数。</li>
 <li>解集不能包含重复的组合。
-<img src="https://i-blog.csdnimg.cn/direct/e5ae08007b214858bce4423edd8de0cb.png" alt="在这里插入图片描述"></li>
+<img src="/xiaoruhome/assets/posts/leetcode-summary/image-052.png" alt="刷题笔记配图"></li>
 </ul>
 </blockquote>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
@@ -2285,7 +2285,7 @@ s 仅由数字组成</p>
 <p>给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。</p>
 <p>每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 ‘Q’ 和 ‘.’ 分别代表了皇后和空位。</p>
 <p>示例 1：</p>
-<p><img src="https://i-blog.csdnimg.cn/direct/200c15a684bb49a7a9b67931407a252b.png" alt="在这里插入图片描述"></p>
+<p><img src="/xiaoruhome/assets/posts/leetcode-summary/image-053.png" alt="刷题笔记配图"></p>
 <p>输入：n = 4
 输出：[[“.Q..”,“…Q”,“Q…”,“..Q.”],[“..Q.”,“Q…”,“…Q”,“.Q..”]]</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Solution</span><span style="color:#E1E4E8">:</span></span>
