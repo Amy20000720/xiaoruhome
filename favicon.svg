@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="小茹的收藏柜">
+  <rect x="7" y="8" width="50" height="48" rx="8" fill="#d9aa45" stroke="#2b211a" stroke-width="4"/>
+  <path d="M14 28h36M14 43h36" stroke="#2b211a" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="20" r="5" fill="#2e7d78" stroke="#2b211a" stroke-width="3"/>
+  <rect x="35" y="15" width="10" height="10" rx="2" fill="#d86956" stroke="#2b211a" stroke-width="3"/>
+  <path d="M23 38l9-6 9 6" fill="none" stroke="#2b211a" stroke-width="3" stroke-linecap="round"/>
+</svg>
