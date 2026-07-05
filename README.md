@@ -1,6 +1,6 @@
-# 小茹的收藏柜
+# 小茹的糖果小镇
 
-中文个人网站第一版。首页是 CSS 手绘收藏柜占位图，包含关于我、技术文章、项目入口、个人生活和联系我五个入口。
+中文个人网站第一版。首页是梦幻糖果小镇互动地图，包含关于我、技术文章、项目入口、个人生活和联系我五个入口。
 
 ## 访问地址
 
@@ -106,7 +106,7 @@ src/content/life/
 
 常改的文件：
 
-- 首页收藏柜：`src/pages/index.astro`
+- 首页糖果小镇地图：`src/pages/index.astro`
 - 全站样式、颜色、布局：`src/styles/global.css`
 - 页面外壳和顶部导航：`src/layouts/BaseLayout.astro`
 - 内容结构和字段校验：`src/content.config.ts`

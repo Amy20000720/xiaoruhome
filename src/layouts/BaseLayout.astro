@@ -9,12 +9,13 @@ interface Props {
 }
 
 const {
-  title = "小茹的收藏柜",
+  title = "小茹的糖果小镇",
   description = "中文个人网站，记录技术文章、项目、生活和个人介绍。",
   home = false,
 } = Astro.props;
 
-const pageTitle = title === "小茹的收藏柜" ? title : `${title} | 小茹的收藏柜`;
+const siteName = "小茹的糖果小镇";
+const pageTitle = title === siteName ? title : `${title} | ${siteName}`;
 const currentPath = Astro.url.pathname.endsWith("/") && Astro.url.pathname !== "/"
   ? Astro.url.pathname.slice(0, -1)
   : Astro.url.pathname;
@@ -42,7 +43,7 @@ const navItems = [
     <header class="site-header">
       <a class="brand" href={withBase("/")} aria-label="回到首页">
         <span class="brand-mark" aria-hidden="true">小</span>
-        <span>小茹的收藏柜</span>
+        <span>{siteName}</span>
       </a>
       <nav class="site-nav" aria-label="主导航">
         {
