@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="小茹的糖果小镇">
-  <rect x="8" y="18" width="48" height="36" rx="10" fill="#ffe1ef" stroke="#512744" stroke-width="4"/>
-  <path d="M12 22c6-10 14-14 20-6 6-8 16-4 20 6" fill="#fff0a8" stroke="#512744" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="22" cy="35" r="6" fill="#c9f0ed" stroke="#512744" stroke-width="3"/>
-  <rect x="36" y="32" width="10" height="18" rx="5" fill="#f4a9ce" stroke="#512744" stroke-width="3"/>
-  <path d="M32 4l4 12 12 4-12 4-4 12-4-12-12-4 12-4 4-12z" fill="#fffaf3" stroke="#d7a94f" stroke-width="3" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="郭小儒的博客">
+  <rect width="64" height="64" rx="12" fill="#fdf6ee"/>
+  <path d="M14 16h36v34H14z" fill="#fff" stroke="#0f3318" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M22 26h20M22 34h15M22 42h12" stroke="#2e6b35" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="46" cy="20" r="7" fill="#e8c97e" stroke="#0f3318" stroke-width="3"/>
+  <path d="M42 20h8M46 16v8" stroke="#0f3318" stroke-width="2.4" stroke-linecap="round"/>
 </svg>

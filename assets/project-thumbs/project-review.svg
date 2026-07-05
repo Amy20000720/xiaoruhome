@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Project review illustration">
+  <rect width="640" height="420" rx="24" fill="#fdf6ee"/>
+  <rect x="110" y="78" width="420" height="270" rx="20" fill="#fff" stroke="#0f3318" stroke-width="8"/>
+  <path d="M170 144h202M170 198h294M170 252h214" stroke="#2e6b35" stroke-width="10" stroke-linecap="round"/>
+  <path d="M426 120l26 26 48-58" fill="none" stroke="#c4703a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="188" cy="314" r="18" fill="#e8c97e" stroke="#0f3318" stroke-width="6"/>
+  <circle cx="258" cy="314" r="18" fill="#a3be6e" stroke="#0f3318" stroke-width="6"/>
+  <circle cx="328" cy="314" r="18" fill="#c4703a" stroke="#0f3318" stroke-width="6"/>
+</svg>
