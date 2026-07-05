@@ -1,0 +1,38 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/paths";
+
+const notes = (await getCollection("life", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<BaseLayout title="个人生活" description="小茹的生活记录、随笔和收藏。">
+  <section class="page-hero">
+    <p class="eyebrow">Life</p>
+    <h1>个人生活</h1>
+    <p class="lead">不只放工作和技术，也留一些日常、照片、读书、旅行和生活里的小记录。</p>
+  </section>
+
+  <section class="content-list" aria-label="生活记录列表">
+    {
+      notes.map((note) => (
+        <a class="content-card" href={withBase(`/life/${note.id}/`)}>
+          <div class="meta">
+            <time datetime={note.data.date.toISOString()}>{note.data.date.toLocaleDateString("zh-CN")}</time>
+            {note.data.location && <span>{note.data.location}</span>}
+            {note.data.mood && <span>{note.data.mood}</span>}
+          </div>
+          <h2>{note.data.title}</h2>
+          <p>{note.data.summary}</p>
+          <div class="tag-list">
+            {note.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </a>
+      ))
+    }
+  </section>
+</BaseLayout>

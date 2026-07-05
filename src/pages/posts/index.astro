@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/paths";
+
+const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<BaseLayout title="技术文章" description="小茹的技术文章和学习笔记。">
+  <section class="page-hero">
+    <p class="eyebrow">Posts</p>
+    <h1>技术文章</h1>
+    <p class="lead">记录工程实践、AI 工具、问题拆解和长期学习笔记。新增 Markdown 文件后会自动进入这里。</p>
+  </section>
+
+  <section class="content-list" aria-label="技术文章列表">
+    {
+      posts.map((post) => (
+        <a class="content-card" href={withBase(`/posts/${post.id}/`)}>
+          <div class="meta">
+            <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString("zh-CN")}</time>
+          </div>
+          <h2>{post.data.title}</h2>
+          <p>{post.data.summary}</p>
+          <div class="tag-list">
+            {post.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </a>
+      ))
+    }
+  </section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="关于我" description="小茹的个人介绍、关注方向和技能关键词。">
+  <section class="page-hero">
+    <p class="eyebrow">About</p>
+    <h1>关于我</h1>
+    <p class="lead">
+      这里是个人网站的自我介绍页。后续可以放更完整的经历、现在关注的技术方向、长期项目和个人关键词。
+    </p>
+  </section>
+
+  <section class="page-body">
+    <div class="section-grid">
+      <article class="note-card">
+        <h2>现在关注</h2>
+        <p>AI 工具、工程效率、内容表达、个人知识管理，以及如何把复杂问题整理成可复用的系统。</p>
+      </article>
+      <article class="note-card">
+        <h2>我想记录</h2>
+        <p>技术学习、项目实践、读书和生活观察。这个网站会逐步变成一个长期更新的个人档案。</p>
+      </article>
+      <article class="note-card">
+        <h2>关键词</h2>
+        <div class="tag-list">
+          <span class="tag">AI</span>
+          <span class="tag">工程</span>
+          <span class="tag">写作</span>
+          <span class="tag">生活记录</span>
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

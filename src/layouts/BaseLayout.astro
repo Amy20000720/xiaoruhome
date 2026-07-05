@@ -1,0 +1,61 @@
+---
+import { withBase } from "../lib/paths";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  home?: boolean;
+}
+
+const {
+  title = "小茹的收藏柜",
+  description = "中文个人网站，记录技术文章、项目、生活和个人介绍。",
+  home = false,
+} = Astro.props;
+
+const pageTitle = title === "小茹的收藏柜" ? title : `${title} | 小茹的收藏柜`;
+const currentPath = Astro.url.pathname.endsWith("/") && Astro.url.pathname !== "/"
+  ? Astro.url.pathname.slice(0, -1)
+  : Astro.url.pathname;
+const navItems = [
+  { href: "/", label: "首页" },
+  { href: "/about", label: "关于我" },
+  { href: "/posts", label: "技术文章" },
+  { href: "/projects", label: "项目" },
+  { href: "/life", label: "生活" },
+  { href: "/contact", label: "联系" },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+  </head>
+  <body class:list={[home && "is-home"]}>
+    <header class="site-header">
+      <a class="brand" href={withBase("/")} aria-label="回到首页">
+        <span class="brand-mark" aria-hidden="true">小</span>
+        <span>小茹的收藏柜</span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        {
+          navItems.map((item) => (
+            <a href={withBase(item.href)} class={currentPath === withBase(item.href).replace(/\/$/, "") ? "active" : ""}>
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+    <main class:list={[home ? "home-main" : "page-main"]}>
+      <slot />
+    </main>
+  </body>
+</html>

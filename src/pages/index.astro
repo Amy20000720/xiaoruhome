@@ -1,0 +1,88 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../lib/paths";
+
+const cabinetItems = [
+  {
+    className: "about-item",
+    objectClass: "about-object",
+    href: "/about",
+    title: "关于我",
+    note: "经历与关注",
+    aria: "查看关于我的介绍",
+  },
+  {
+    className: "posts-item",
+    objectClass: "posts-object",
+    href: "/posts",
+    title: "技术文章",
+    note: "思考与笔记",
+    aria: "查看技术文章",
+    books: true,
+  },
+  {
+    className: "projects-item",
+    objectClass: "projects-object",
+    href: "/projects",
+    title: "项目入口",
+    note: "作品与实验",
+    aria: "查看项目入口",
+  },
+  {
+    className: "life-item",
+    objectClass: "life-object",
+    href: "/life",
+    title: "个人生活",
+    note: "日常与收藏",
+    aria: "查看个人生活记录",
+  },
+  {
+    className: "contact-item",
+    objectClass: "contact-object",
+    href: "/contact",
+    title: "联系我",
+    note: "链接与合作",
+    aria: "查看联系方式",
+  },
+];
+---
+
+<BaseLayout home title="小茹的收藏柜" description="小茹的中文个人网站入口，展示个人介绍、技术文章、项目、生活记录和联系方式。">
+  <section class="home-stage" aria-labelledby="home-title">
+    <div class="home-intro">
+      <p class="eyebrow">中文个人网站</p>
+      <h1 id="home-title">把技术、项目和生活放进同一个收藏柜。</h1>
+      <p class="lead">
+        这里会慢慢收纳我的个人介绍、技术文章、项目实验、生活记录和联系方式。每一个格子都是一段正在展开的记录。
+      </p>
+      <span class="home-hint">从一个格子开始</span>
+    </div>
+
+    <div class="cabinet-wrap" aria-label="个人网站收藏柜导航">
+      <div class="cabinet">
+        <div class="cabinet-back" aria-hidden="true"></div>
+        {
+          cabinetItems.map((item) => (
+            <a class:list={["cabinet-item", item.className]} href={withBase(item.href)} aria-label={item.aria}>
+              <span class:list={["object", item.objectClass]} aria-hidden="true">
+                {item.books && (
+                  <>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </>
+                )}
+              </span>
+              <span class="item-label">
+                {item.title}
+                <small>{item.note}</small>
+              </span>
+            </a>
+          ))
+        }
+        <div class="mini-drawer" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
