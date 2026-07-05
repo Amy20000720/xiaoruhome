@@ -1,6 +1,6 @@
-# 小茹的糖果小镇
+# 郭小儒的博客
 
-中文个人网站第一版。首页是梦幻糖果小镇互动地图，包含关于我、技术文章、项目入口、个人生活和联系我五个入口。
+中文个人博客和作品集入口。首页包含个人介绍、个人照片、互动地图导航，以及 About、Projects、Blog、Life、Contact 五个入口。
 
 ## 访问地址
 
@@ -47,13 +47,13 @@ npm run deploy
 
 ## 内容
 
-- 技术文章：`src/content/posts/`
+- 博客文章：`src/content/posts/`
 - 项目：`src/content/projects/`
 - 生活记录：`src/content/life/`
 
 新增 Markdown 文件后，列表页会自动读取并展示。
 
-## 更新技术文章
+## 更新博客文章
 
 在 `src/content/posts/` 里新增一个 `.md` 文件，例如：
 
@@ -106,7 +106,7 @@ src/content/life/
 
 常改的文件：
 
-- 首页糖果小镇地图：`src/pages/index.astro`
+- 首页个人介绍和互动地图：`src/pages/index.astro`
 - 全站样式、颜色、布局：`src/styles/global.css`
 - 页面外壳和顶部导航：`src/layouts/BaseLayout.astro`
 - 内容结构和字段校验：`src/content.config.ts`

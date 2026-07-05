@@ -6,32 +6,95 @@ import { withBase } from "../../lib/paths";
 const projects = (await getCollection("projects", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+
+const projectCards = [
+  ...projects.map((project) => ({
+    title: project.data.title,
+    summary: project.data.summary,
+    href: withBase(`/projects/${project.id}/`),
+    image: withBase("/assets/candy-town/candy-town-map.webp"),
+    tags: project.data.tags,
+    status: project.data.status,
+  })),
+  {
+    title: "AI 工具实践",
+    summary: "记录如何把 AI 工具放进学习、写作、调研和工程工作流里，保留可复用的方法。",
+    href: "",
+    image: withBase("/assets/project-thumbs/ai-workflow.svg"),
+    tags: ["AI", "Workflow"],
+    status: "整理中",
+  },
+  {
+    title: "Markdown 内容系统",
+    summary: "用 Markdown 管理文章、项目和生活记录，让网站内容可以长期扩展。",
+    href: "",
+    image: withBase("/assets/project-thumbs/markdown-notes.svg"),
+    tags: ["Markdown", "Astro"],
+    status: "进行中",
+  },
+  {
+    title: "项目复盘笔记",
+    summary: "把做过的实验、遇到的问题和解决路径整理成可以回看的项目档案。",
+    href: "",
+    image: withBase("/assets/project-thumbs/project-review.svg"),
+    tags: ["复盘", "写作"],
+    status: "计划中",
+  },
+  {
+    title: "个人知识库",
+    summary: "收集读书、课程、工具和灵感，逐步形成自己的知识索引。",
+    href: "",
+    image: withBase("/assets/project-thumbs/knowledge-base.svg"),
+    tags: ["PKM", "Notes"],
+    status: "计划中",
+  },
+];
 ---
 
-<BaseLayout title="项目入口" description="小茹的项目、作品和实验入口。">
+<BaseLayout title="Projects" description="郭小儒的项目、作品和实验入口。">
   <section class="page-hero">
     <p class="eyebrow">Projects</p>
-    <h1>项目入口</h1>
+    <h1>Projects</h1>
     <p class="lead">把正在做、做过、想继续打磨的项目放在这里，方便快速回看和分享。</p>
   </section>
 
-  <section class="section-grid" aria-label="项目列表">
+  <section class="project-gallery" aria-label="项目列表">
     {
-      projects.map((project) => (
-        <a class="content-card" href={withBase(`/projects/${project.id}/`)}>
-          <div class="meta">
-            <time datetime={project.data.date.toISOString()}>{project.data.date.toLocaleDateString("zh-CN")}</time>
-            <span>{project.data.status}</span>
-          </div>
-          <h2>{project.data.title}</h2>
-          <p>{project.data.summary}</p>
-          <div class="tag-list">
-            {project.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
-          </div>
-        </a>
-      ))
+      projectCards.map((project) =>
+        project.href ? (
+          <a class="project-card" href={project.href}>
+            <img src={project.image} alt="" loading="lazy" decoding="async" />
+            <div class="project-card-body">
+              <div class="meta">
+                <span>{project.status}</span>
+              </div>
+              <h2>{project.title}</h2>
+              <p>{project.summary}</p>
+            </div>
+            <div class="tag-list">
+              {project.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ) : (
+          <article class="project-card">
+            <img src={project.image} alt="" loading="lazy" decoding="async" />
+            <div class="project-card-body">
+              <div class="meta">
+                <span>{project.status}</span>
+              </div>
+              <h2>{project.title}</h2>
+              <p>{project.summary}</p>
+            </div>
+            <div class="tag-list">
+              {project.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </article>
+        ),
+      )
     }
   </section>
 </BaseLayout>

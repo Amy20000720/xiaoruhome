@@ -8,26 +8,31 @@ const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
 );
 ---
 
-<BaseLayout title="技术文章" description="小茹的技术文章和学习笔记。">
+<BaseLayout title="Blog" description="郭小儒的博客文章和学习笔记。">
   <section class="page-hero">
-    <p class="eyebrow">Posts</p>
-    <h1>技术文章</h1>
+    <p class="eyebrow">Blog</p>
+    <h1>Blog</h1>
     <p class="lead">记录工程实践、AI 工具、问题拆解和长期学习笔记。新增 Markdown 文件后会自动进入这里。</p>
   </section>
 
-  <section class="content-list" aria-label="技术文章列表">
+  <section class="blog-listing" aria-label="博客文章列表">
     {
       posts.map((post) => (
-        <a class="content-card" href={withBase(`/posts/${post.id}/`)}>
-          <div class="meta">
+        <a class="blog-post" href={withBase(`/posts/${post.id}/`)}>
+          <div class="blog-post-body">
+            <h2>{post.data.title}</h2>
+            <div class="tag-list">
+              {post.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+            <p>{post.data.summary}</p>
+          </div>
+          <div class="blog-post-meta">
             <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString("zh-CN")}</time>
           </div>
-          <h2>{post.data.title}</h2>
-          <p>{post.data.summary}</p>
-          <div class="tag-list">
-            {post.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
+          <div class="blog-thumb" aria-hidden="true">
+            <img src={withBase("/assets/project-thumbs/markdown-notes.svg")} alt="" loading="lazy" decoding="async" />
           </div>
         </a>
       ))

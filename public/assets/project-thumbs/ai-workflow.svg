@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="AI workflow illustration">
+  <rect width="640" height="420" rx="24" fill="#fdf6ee"/>
+  <path d="M78 312 C148 250 184 238 248 264 C310 290 338 240 390 218 C450 192 512 218 566 162" fill="none" stroke="#c4703a" stroke-width="12" stroke-linecap="round"/>
+  <rect x="86" y="72" width="182" height="120" rx="18" fill="#fff" stroke="#0f3318" stroke-width="8"/>
+  <rect x="372" y="210" width="178" height="112" rx="18" fill="#fff" stroke="#0f3318" stroke-width="8"/>
+  <circle cx="176" cy="132" r="30" fill="#e8c97e"/>
+  <path d="M154 132h44M176 110v44" stroke="#0f3318" stroke-width="8" stroke-linecap="round"/>
+  <path d="M418 250h88M418 282h58" stroke="#2e6b35" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="318" cy="174" r="54" fill="#a3be6e" stroke="#0f3318" stroke-width="8"/>
+  <path d="M296 174h44M318 152v44" stroke="#0f3318" stroke-width="8" stroke-linecap="round"/>
+</svg>

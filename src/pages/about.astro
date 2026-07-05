@@ -1,14 +1,35 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../lib/paths";
 ---
 
-<BaseLayout title="关于我" description="小茹的个人介绍、关注方向和技能关键词。">
+<BaseLayout title="关于我" description="郭小儒的个人介绍、关注方向和技能关键词。">
   <section class="page-hero">
     <p class="eyebrow">About</p>
     <h1>关于我</h1>
     <p class="lead">
-      这里是个人网站的自我介绍页。后续可以放更完整的经历、现在关注的技术方向、长期项目和个人关键词。
+      这是一个长期更新的个人主页，用来整理我正在学习、实践和想保存下来的内容。
     </p>
+  </section>
+
+  <section class="about-intro">
+    <img
+      src={withBase("/assets/profile/guo-xiaoru-avatar.webp")}
+      alt="郭小儒的头像"
+      width="520"
+      height="520"
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="about-copy">
+      <h2>郭小儒</h2>
+      <p>
+        我正在搭建一个可以长期记录自己的地方：技术文章、项目实验、生活片段、读书和一些阶段性的思考，都会慢慢沉淀在这里。
+      </p>
+      <p>
+        现在我更关注 AI 工具如何帮助学习和创作，也关注工程效率、内容表达、个人知识管理，以及如何把复杂问题拆清楚。
+      </p>
+    </div>
   </section>
 
   <section class="page-body">
