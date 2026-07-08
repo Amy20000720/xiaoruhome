@@ -10,10 +10,12 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^7.0.6"
+    "astro": "^7.0.6",
+    "fabric": "^7.4.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@types/node": "^26.1.0",
     "gh-pages": "^6.3.0",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3"

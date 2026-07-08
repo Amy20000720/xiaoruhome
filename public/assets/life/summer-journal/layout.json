@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "page": {
+    "size": "a5",
+    "orientation": "portrait",
+    "theme": "candy-y2k-grid"
+  },
+  "elements": [
+    {
+      "id": "pink-grid-tape",
+      "type": "tape",
+      "assetId": "tape-pink-grid",
+      "x": 42,
+      "y": 32,
+      "width": 142,
+      "height": 28,
+      "rotation": -7,
+      "zIndex": 7
+    },
+    {
+      "id": "blue-star-tape",
+      "type": "tape",
+      "assetId": "tape-blue-star",
+      "x": 246,
+      "y": 102,
+      "width": 140,
+      "height": 28,
+      "rotation": 6,
+      "zIndex": 7
+    },
+    {
+      "id": "sunny-sticker",
+      "type": "sticker",
+      "assetId": "sticker-sunny",
+      "x": 312,
+      "y": 34,
+      "width": 70,
+      "height": 70,
+      "rotation": 8,
+      "zIndex": 8
+    },
+    {
+      "id": "coffee-sticker",
+      "type": "sticker",
+      "assetId": "sticker-coffee",
+      "x": 42,
+      "y": 422,
+      "width": 82,
+      "height": 70,
+      "rotation": -5,
+      "zIndex": 8
+    },
+    {
+      "id": "mint-note",
+      "type": "note",
+      "assetId": "note-mint",
+      "text": "今天的生活很轻盈，适合被贴在纸上。",
+      "x": 242,
+      "y": 390,
+      "width": 138,
+      "height": 104,
+      "rotation": 4,
+      "zIndex": 5
+    },
+    {
+      "id": "date-stamp",
+      "type": "stamp",
+      "assetId": "stamp-date",
+      "text": "2026.07.08",
+      "x": 190,
+      "y": 30,
+      "width": 112,
+      "height": 32,
+      "rotation": 2,
+      "zIndex": 8
+    },
+    {
+      "id": "memory-stamp",
+      "type": "stamp",
+      "assetId": "stamp-memory",
+      "text": "LIFE PAGE",
+      "x": 256,
+      "y": 520,
+      "width": 118,
+      "height": 42,
+      "rotation": -4,
+      "zIndex": 8
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { journalAssetCatalog } from "../../lib/journalAssets";
+import "../../styles/journal-studio.css";
+
+const groupedAssets = journalAssetCatalog.filter((asset) => asset.kind !== "paper");
+---
+
+<BaseLayout title="手帐 Studio" description="本地 A5 电子手帐编辑器。">
+  <section class="journal-studio" data-journal-studio>
+    <div class="studio-header">
+      <div>
+        <p class="eyebrow">Local Studio</p>
+        <h1>A5 手帐 Studio</h1>
+        <p class="lead">本地拖拽素材、照片和文字，完成后导出 Markdown 与 layout JSON。</p>
+      </div>
+      <div class="studio-actions">
+        <button class="studio-button" type="button" data-action="save">保存草稿</button>
+        <button class="studio-button secondary" type="button" data-action="export">导出</button>
+      </div>
+    </div>
+
+    <div class="studio-mobile-note">
+      编辑器第一版优先支持桌面端。当前屏幕较窄时，建议切换到电脑或横屏后再编辑。
+    </div>
+
+    <div class="studio-layout">
+      <aside class="studio-panel studio-panel-assets" aria-label="手帐素材">
+        <h2>素材</h2>
+        <div class="studio-tool-row">
+          <button class="studio-button" type="button" data-action="add-text">文字</button>
+          <button class="studio-button" type="button" data-action="add-note">便签</button>
+          <button class="studio-button" type="button" data-action="add-stamp">日期章</button>
+        </div>
+        <label class="studio-upload">
+          <span>上传照片</span>
+          <input type="file" accept="image/*" data-action="upload-image" />
+        </label>
+        <div class="studio-asset-grid">
+          {
+            groupedAssets.map((asset) => (
+              <button class={`studio-asset ${asset.className}`} type="button" data-asset-id={asset.id}>
+                <span>{asset.name}</span>
+              </button>
+            ))
+          }
+        </div>
+      </aside>
+
+      <section class="studio-canvas-panel" aria-label="A5 手帐画布">
+        <div class="studio-canvas-toolbar" aria-label="画布工具">
+          <button class="studio-icon-button" type="button" data-action="bring-front">上移</button>
+          <button class="studio-icon-button" type="button" data-action="send-back">下移</button>
+          <button class="studio-icon-button danger" type="button" data-action="delete">删除</button>
+        </div>
+        <div class="studio-canvas-shell">
+          <canvas id="journal-canvas" width="420" height="594"></canvas>
+        </div>
+      </section>
+
+      <aside class="studio-panel studio-panel-meta" aria-label="手帐元数据和导出">
+        <h2>记录</h2>
+        <label>
+          <span>标题</span>
+          <input id="journal-title" type="text" value="新的手帐页" />
+        </label>
+        <label>
+          <span>日期</span>
+          <input id="journal-date" type="date" />
+        </label>
+        <label>
+          <span>摘要</span>
+          <textarea id="journal-summary" rows="3">一张新的 A5 电子手帐。</textarea>
+        </label>
+        <div class="studio-field-grid">
+          <label>
+            <span>标签</span>
+            <input id="journal-tags" type="text" value="生活, 手帐" />
+          </label>
+          <label>
+            <span>心情</span>
+            <input id="journal-mood" type="text" value="轻松" />
+          </label>
+        </div>
+        <label>
+          <span>地点</span>
+          <input id="journal-location" type="text" value="个人网站" />
+        </label>
+        <label>
+          <span>Slug</span>
+          <input id="journal-slug" type="text" value="new-journal-page" />
+        </label>
+        <label>
+          <span>正文</span>
+          <textarea id="journal-body" rows="5">今天记录一点生活里的小事。</textarea>
+        </label>
+        <label>
+          <span>导出结果</span>
+          <textarea id="journal-export" rows="10" readonly></textarea>
+        </label>
+      </aside>
+    </div>
+  </section>
+
+  <script>
+    import "../../scripts/journal-studio.ts";
+  </script>
+</BaseLayout>

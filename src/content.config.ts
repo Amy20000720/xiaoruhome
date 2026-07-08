@@ -30,6 +30,7 @@ const life = defineCollection({
   schema: sharedSchema.extend({
     mood: z.string().optional(),
     location: z.string().optional(),
+    journalLayout: z.string().optional(),
   }),
 });
 

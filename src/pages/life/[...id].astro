@@ -1,23 +1,33 @@
 ---
 import { getCollection, render } from "astro:content";
+import JournalPage from "../../components/JournalPage.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { readJournalLayout } from "../../lib/journalLayout";
+import { withBase } from "../../lib/paths";
 
 export async function getStaticPaths() {
-  const notes = await getCollection("life", ({ data }) => !data.draft);
-  return notes.map((note) => ({
+  const notes = (await getCollection("life", ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+  );
+  return notes.map((note, index) => ({
     params: { id: note.id },
-    props: { note },
+    props: {
+      note,
+      previous: notes[index + 1],
+      next: notes[index - 1],
+    },
   }));
 }
 
-const { note } = Astro.props;
+const { note, previous, next } = Astro.props;
 const { Content } = await render(note);
+const layout = await readJournalLayout(note.data.journalLayout);
 ---
 
 <BaseLayout title={note.data.title} description={note.data.summary}>
-  <article class="entry-page">
+  <article class="entry-page journal-entry-page">
     <section class="page-hero">
-      <p class="eyebrow">生活记录</p>
+      <p class="eyebrow">Life Journal</p>
       <h1>{note.data.title}</h1>
       <div class="meta">
         <time datetime={note.data.date.toISOString()}>{note.data.date.toLocaleDateString("zh-CN")}</time>
@@ -28,8 +38,17 @@ const { Content } = await render(note);
         {note.data.tags.map((tag) => <span class="tag">{tag}</span>)}
       </div>
     </section>
-    <div class="entry-content">
+
+    <JournalPage note={note} layout={layout}>
       <Content />
-    </div>
+    </JournalPage>
+
+    <nav class="journal-page-nav" aria-label="生活手帐翻页">
+      <a class="text-button secondary" href={withBase("/life/")}>返回目录</a>
+      <div class="journal-page-neighbors">
+        {previous && <a href={withBase(`/life/${previous.id}/`)}>上一篇：{previous.data.title}</a>}
+        {next && <a href={withBase(`/life/${next.id}/`)}>下一篇：{next.data.title}</a>}
+      </div>
+    </nav>
   </article>
 </BaseLayout>

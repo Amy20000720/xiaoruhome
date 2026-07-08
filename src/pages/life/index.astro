@@ -1,38 +1,71 @@
 ---
 import { getCollection } from "astro:content";
+import JournalPage from "../../components/JournalPage.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { readJournalLayout } from "../../lib/journalLayout";
 import { withBase } from "../../lib/paths";
 
 const notes = (await getCollection("life", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+const journalNotes = await Promise.all(
+  notes.map(async (note) => ({
+    note,
+    layout: await readJournalLayout(note.data.journalLayout),
+  })),
+);
+const featured = journalNotes[0];
+const monthLabels = Array.from(
+  new Set(notes.map((note) => note.data.date.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit" }))),
+);
+const moods = Array.from(new Set(notes.map((note) => note.data.mood).filter(Boolean)));
+const locations = Array.from(new Set(notes.map((note) => note.data.location).filter(Boolean)));
 ---
 
-<BaseLayout title="个人生活" description="郭小儒的生活记录、随笔和收藏。">
-  <section class="page-hero">
-    <p class="eyebrow">Life</p>
-    <h1>个人生活</h1>
-    <p class="lead">不只放工作和技术，也留一些日常、照片、读书、旅行和生活里的小记录。</p>
+<BaseLayout title="电子手帐" description="郭小儒的生活记录、随笔、照片和电子手帐。">
+  <section class="page-hero journal-hero">
+    <p class="eyebrow">Life Journal</p>
+    <h1>电子手帐书</h1>
+    <p class="lead">把日常、照片、心情和小物件贴成一张张 A5 手帐页，慢慢保存生活里的片段。</p>
   </section>
 
-  <section class="content-list" aria-label="生活记录列表">
-    {
-      notes.map((note) => (
-        <a class="content-card" href={withBase(`/life/${note.id}/`)}>
-          <div class="meta">
-            <time datetime={note.data.date.toISOString()}>{note.data.date.toLocaleDateString("zh-CN")}</time>
-            {note.data.location && <span>{note.data.location}</span>}
-            {note.data.mood && <span>{note.data.mood}</span>}
-          </div>
-          <h2>{note.data.title}</h2>
-          <p>{note.data.summary}</p>
-          <div class="tag-list">
-            {note.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
-          </div>
-        </a>
-      ))
-    }
+  {featured && (
+    <section class="journal-feature" aria-label="最新手帐页">
+      <div class="journal-feature-copy">
+        <p class="eyebrow">Latest Page</p>
+        <h2>{featured.note.data.title}</h2>
+        <p>{featured.note.data.summary}</p>
+        <div class="journal-index-tags" aria-label="手帐索引">
+          {monthLabels.map((month) => <span>{month}</span>)}
+          {moods.map((mood) => <span>{mood}</span>)}
+          {locations.map((location) => <span>{location}</span>)}
+        </div>
+        <a class="text-button" href={withBase(`/life/${featured.note.id}/`)}>打开这一页</a>
+      </div>
+      <a class="journal-feature-page" href={withBase(`/life/${featured.note.id}/`)} aria-label={`打开${featured.note.data.title}`}>
+        <JournalPage note={featured.note} layout={featured.layout} preview>
+          <p>{featured.note.data.summary}</p>
+        </JournalPage>
+      </a>
+    </section>
+  )}
+
+  <section class="journal-shelf" aria-label="生活手帐目录">
+    {journalNotes.map(({ note, layout }, index) => (
+      <a class="journal-card" href={withBase(`/life/${note.id}/`)} style={`--card-tilt: ${index % 2 === 0 ? "-1.2deg" : "1.4deg"}`}>
+        <div class="journal-card-pin" aria-hidden="true"></div>
+        <div class="meta">
+          <time datetime={note.data.date.toISOString()}>{note.data.date.toLocaleDateString("zh-CN")}</time>
+          {note.data.location && <span>{note.data.location}</span>}
+          {note.data.mood && <span>{note.data.mood}</span>}
+        </div>
+        <h2>{note.data.title}</h2>
+        <p>{note.data.summary}</p>
+        <div class="tag-list">
+          {note.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+          {layout && <span class="tag">A5</span>}
+        </div>
+      </a>
+    ))}
   </section>
 </BaseLayout>

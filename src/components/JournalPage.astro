@@ -1,0 +1,45 @@
+---
+import JournalElement from "./JournalElement.astro";
+import type { CollectionEntry } from "astro:content";
+import type { JournalLayout } from "../lib/journalLayout";
+
+interface Props {
+  note: CollectionEntry<"life">;
+  layout?: JournalLayout | null;
+  preview?: boolean;
+}
+
+const { note, layout = null, preview = false } = Astro.props;
+const dateLabel = note.data.date.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+const theme = layout?.page.theme ?? "candy-y2k-grid";
+const elements = layout?.elements ?? [];
+---
+
+<section class:list={["journal-shell", preview && "journal-shell-preview"]} aria-label={`${note.data.title} 手帐页`}>
+  <div class={`journal-page journal-theme-${theme}`}>
+    <div class="journal-paper-layer" aria-hidden="true"></div>
+    <div class="journal-entry-core">
+      <div class="journal-entry-date">
+        <span>{dateLabel}</span>
+        {note.data.mood && <span>{note.data.mood}</span>}
+        {note.data.location && <span>{note.data.location}</span>}
+      </div>
+      <h2>{note.data.title}</h2>
+      <div class="journal-entry-text">
+        <slot />
+      </div>
+      {!preview && (
+        <div class="tag-list journal-tags">
+          {note.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+    </div>
+    <div class="journal-element-layer" aria-hidden={preview ? "true" : "false"}>
+      {elements.map((element) => <JournalElement element={element} />)}
+    </div>
+  </div>
+</section>

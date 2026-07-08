@@ -1,0 +1,48 @@
+---
+import { withBase } from "../lib/paths";
+import {
+  getJournalAsset,
+  JOURNAL_PAGE_HEIGHT,
+  JOURNAL_PAGE_WIDTH,
+} from "../lib/journalAssets";
+import type { JournalElement } from "../lib/journalLayout";
+
+interface Props {
+  element: JournalElement;
+}
+
+const { element } = Astro.props;
+const asset = getJournalAsset(element.assetId);
+const classNames = [
+  "journal-element",
+  `journal-element-${element.type}`,
+  element.style && `journal-style-${element.style}`,
+  asset?.className,
+].filter(Boolean);
+
+const style = [
+  `--x: ${(element.x / JOURNAL_PAGE_WIDTH) * 100}%`,
+  `--y: ${(element.y / JOURNAL_PAGE_HEIGHT) * 100}%`,
+  `--w: ${(element.width / JOURNAL_PAGE_WIDTH) * 100}%`,
+  `--h: ${(element.height / JOURNAL_PAGE_HEIGHT) * 100}%`,
+  `--r: ${element.rotation ?? 0}deg`,
+  `--z: ${element.zIndex ?? 2}`,
+].join("; ");
+
+const imageSrc = element.src ? withBase(element.src) : "";
+const label = element.text ?? asset?.defaultText ?? asset?.name ?? "";
+---
+
+{
+  element.type === "image" ? (
+    <figure class:list={classNames} style={style}>
+      <img src={imageSrc} alt={element.alt ?? ""} loading="lazy" />
+    </figure>
+  ) : element.type === "tape" || element.type === "frame" ? (
+    <div class:list={classNames} style={style} aria-hidden="true"></div>
+  ) : (
+    <div class:list={classNames} style={style}>
+      {label && <span>{label}</span>}
+    </div>
+  )
+}
