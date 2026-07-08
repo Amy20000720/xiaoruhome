@@ -133,6 +133,10 @@ img {
   padding: 46px 0 80px;
 }
 
+.wide-main {
+  width: min(1320px, calc(100% - 36px));
+}
+
 .home-profile,
 .page-hero,
 .city-explore,
