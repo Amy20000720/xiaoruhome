@@ -22,8 +22,8 @@ export interface JournalElement {
 export interface JournalLayout {
   version: number;
   page: {
-    size: "a5";
-    orientation: "portrait";
+    size: "a5" | "b5-spread";
+    orientation: "portrait" | "landscape";
     theme: string;
   };
   elements: JournalElement[];

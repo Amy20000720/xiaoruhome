@@ -34,7 +34,7 @@ const label = element.text ?? asset?.defaultText ?? asset?.name ?? "";
 ---
 
 {
-  element.type === "image" ? (
+  element.src ? (
     <figure class:list={classNames} style={style}>
       <img src={imageSrc} alt={element.alt ?? ""} loading="lazy" />
     </figure>

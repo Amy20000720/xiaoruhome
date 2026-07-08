@@ -1,102 +1,181 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { journalAssetCatalog } from "../../lib/journalAssets";
+import { withBase } from "../../lib/paths";
 import "../../styles/journal-studio.css";
 
-const groupedAssets = journalAssetCatalog.filter((asset) => asset.kind !== "paper");
+const studioAssets = journalAssetCatalog.filter((asset) => asset.kind !== "paper");
+const studioAssetCategories = ["胶带", "标签", "贴纸", "底图", "字体", "模板", "我的导入"];
+const today = new Date().toISOString().slice(0, 10);
 ---
 
-<BaseLayout title="手帐 Studio" description="本地 A5 电子手帐编辑器。">
-  <section class="journal-studio" data-journal-studio>
-    <div class="studio-header">
+<BaseLayout title="读书手帐 Studio" description="本地双页读书手帐编辑器。" wide>
+  <section class="journal-studio reading-studio" data-journal-studio>
+    <header class="studio-header">
       <div>
-        <p class="eyebrow">Local Studio</p>
-        <h1>A5 手帐 Studio</h1>
-        <p class="lead">本地拖拽素材、照片和文字，完成后导出 Markdown 与 layout JSON。</p>
+        <p class="eyebrow">Reading Journal Studio</p>
+        <h1>读书手帐 Studio</h1>
       </div>
-      <div class="studio-actions">
+      <div class="studio-actions" aria-label="手帐操作">
+        <button class="studio-button ghost" type="button" data-action="reset-template">重置模板</button>
         <button class="studio-button" type="button" data-action="save">保存草稿</button>
         <button class="studio-button secondary" type="button" data-action="export">导出</button>
       </div>
-    </div>
+    </header>
 
-    <div class="studio-mobile-note">
-      编辑器第一版优先支持桌面端。当前屏幕较窄时，建议切换到电脑或横屏后再编辑。
-    </div>
-
-    <div class="studio-layout">
-      <aside class="studio-panel studio-panel-assets" aria-label="手帐素材">
-        <h2>素材</h2>
-        <div class="studio-tool-row">
-          <button class="studio-button" type="button" data-action="add-text">文字</button>
-          <button class="studio-button" type="button" data-action="add-note">便签</button>
-          <button class="studio-button" type="button" data-action="add-stamp">日期章</button>
+    <div class="studio-layout reading-studio-layout">
+      <aside class="studio-panel studio-panel-assets" aria-label="素材箱">
+        <div class="panel-heading">
+          <h2>素材箱</h2>
+          <span>Library</span>
         </div>
+        <input class="tool-search" type="search" placeholder="胶带 / 拼贴 / sticker / 底图" data-asset-search />
+        <nav class="tool-categories" aria-label="素材分类">
+          {studioAssetCategories.map((category, index) => (
+            <button type="button" class:list={[index === 0 && "active"]} data-category-button={category}>
+              {category}
+            </button>
+          ))}
+        </nav>
         <label class="studio-upload">
-          <span>上传照片</span>
+          <span>导入图片</span>
           <input type="file" accept="image/*" data-action="upload-image" />
         </label>
-        <div class="studio-asset-grid">
+        <div class="studio-asset-grid reading-asset-grid" data-asset-list>
           {
-            groupedAssets.map((asset) => (
-              <button class={`studio-asset ${asset.className}`} type="button" data-asset-id={asset.id}>
-                <span>{asset.name}</span>
+            studioAssets.map((asset) => (
+              <button
+                class={`studio-asset ${asset.className}`}
+                type="button"
+                data-asset-id={asset.id}
+                data-category={asset.category}
+                data-asset-src={asset.src ? withBase(asset.src) : undefined}
+                data-search={`${asset.category} ${asset.name}`}
+              >
+                {asset.src ? <img src={withBase(asset.src)} alt="" loading="lazy" /> : <span class="asset-swatch" aria-hidden="true"></span>}
+                <strong>{asset.name}</strong>
+                <small>{asset.category}</small>
               </button>
             ))
           }
         </div>
+        <div class="source-link">
+          <span>素材来源</span>
+          <a href="https://illustcenter.com/en/" target="_blank" rel="noreferrer">Illustcenter</a>
+        </div>
       </aside>
 
-      <section class="studio-canvas-panel" aria-label="A5 手帐画布">
+      <section class="studio-canvas-panel reading-canvas-panel" aria-label="双页手帐画布">
         <div class="studio-canvas-toolbar" aria-label="画布工具">
+          <button class="studio-icon-button" type="button" data-action="add-text">文字</button>
+          <button class="studio-icon-button" type="button" data-action="add-quote">摘抄</button>
+          <button class="studio-icon-button" type="button" data-action="add-note">便签</button>
           <button class="studio-icon-button" type="button" data-action="bring-front">上移</button>
           <button class="studio-icon-button" type="button" data-action="send-back">下移</button>
           <button class="studio-icon-button danger" type="button" data-action="delete">删除</button>
         </div>
-        <div class="studio-canvas-shell">
-          <canvas id="journal-canvas" width="420" height="594"></canvas>
+        <div class="reading-book-workbench">
+          <div class="book-tabs left-tabs" aria-hidden="true">
+            <span>BOOKCASE</span>
+            <span>WISHLIST</span>
+            <span>LOG</span>
+            <span>JOURNAL</span>
+          </div>
+          <div class="studio-canvas-shell reading-canvas-shell">
+            <canvas id="journal-canvas" width="1120" height="795"></canvas>
+          </div>
         </div>
       </section>
 
-      <aside class="studio-panel studio-panel-meta" aria-label="手帐元数据和导出">
-        <h2>记录</h2>
+      <aside class="studio-panel studio-panel-meta" aria-label="图层、属性和导出">
+        <div class="panel-heading">
+          <h2>图层</h2>
+          <span>Layers</span>
+        </div>
+        <div class="layer-list" data-layer-list>
+          <p>选择画布元素后显示图层。</p>
+        </div>
+
+        <div class="panel-heading compact-heading">
+          <h2>属性</h2>
+          <span>Style</span>
+        </div>
+        <div class="selected-inspector">
+          <label>
+            <span>对象</span>
+            <input id="selected-name" type="text" value="未选择" readonly />
+          </label>
+          <div class="studio-field-grid">
+            <label>
+              <span>X</span>
+              <input id="selected-x" type="number" data-transform-field="x" />
+            </label>
+            <label>
+              <span>Y</span>
+              <input id="selected-y" type="number" data-transform-field="y" />
+            </label>
+            <label>
+              <span>宽</span>
+              <input id="selected-width" type="number" data-transform-field="width" />
+            </label>
+            <label>
+              <span>角度</span>
+              <input id="selected-angle" type="number" data-transform-field="angle" />
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-heading compact-heading">
+          <h2>记录</h2>
+          <span>Meta</span>
+        </div>
         <label>
           <span>标题</span>
-          <input id="journal-title" type="text" value="新的手帐页" />
+          <input id="journal-title" type="text" value="新的读书手帐页" />
+        </label>
+        <div class="studio-field-grid">
+          <label>
+            <span>日期</span>
+            <input id="journal-date" type="date" value={today} />
+          </label>
+          <label>
+            <span>心情</span>
+            <input id="journal-mood" type="text" value="沉浸" />
+          </label>
+        </div>
+        <label>
+          <span>书名</span>
+          <input id="journal-book-title" type="text" value="一间，只属于自己的房间" />
         </label>
         <label>
-          <span>日期</span>
-          <input id="journal-date" type="date" />
+          <span>作者</span>
+          <input id="journal-author" type="text" value="伍尔夫" />
         </label>
         <label>
           <span>摘要</span>
-          <textarea id="journal-summary" rows="3">一张新的 A5 电子手帐。</textarea>
+          <textarea id="journal-summary" rows="3">一张双页 B5 读书手帐。</textarea>
         </label>
         <div class="studio-field-grid">
           <label>
             <span>标签</span>
-            <input id="journal-tags" type="text" value="生活, 手帐" />
+            <input id="journal-tags" type="text" value="读书, 手帐" />
           </label>
           <label>
-            <span>心情</span>
-            <input id="journal-mood" type="text" value="轻松" />
+            <span>地点</span>
+            <input id="journal-location" type="text" value="个人网站" />
           </label>
         </div>
         <label>
-          <span>地点</span>
-          <input id="journal-location" type="text" value="个人网站" />
-        </label>
-        <label>
           <span>Slug</span>
-          <input id="journal-slug" type="text" value="new-journal-page" />
+          <input id="journal-slug" type="text" value="reading-journal-page" />
         </label>
         <label>
           <span>正文</span>
-          <textarea id="journal-body" rows="5">今天记录一点生活里的小事。</textarea>
+          <textarea id="journal-body" rows="4">今天记录一点读书时想到的事情。</textarea>
         </label>
         <label>
           <span>导出结果</span>
-          <textarea id="journal-export" rows="10" readonly></textarea>
+          <textarea id="journal-export" rows="8" readonly></textarea>
         </label>
       </aside>
     </div>
