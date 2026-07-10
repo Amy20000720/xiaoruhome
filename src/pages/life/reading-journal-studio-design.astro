@@ -1,0 +1,329 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/paths";
+import "../../styles/reading-journal-studio-design.css";
+
+const stationerySet = withBase("/assets/life-journal/illustcenter/stationery-set.png");
+const roseFrame = withBase("/assets/life-journal/illustcenter/rose-frame.png");
+const stickyNotes = withBase("/assets/life-journal/illustcenter/sticky-notes.png");
+const brownTag = withBase("/assets/life-journal/illustcenter/brown-tag.png");
+const whiteTag = withBase("/assets/life-journal/illustcenter/white-tag.png");
+const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png");
+---
+
+<BaseLayout
+  title="读书手帐 Studio 视觉稿"
+  description="日系干净文学感的单页 B5 读书手帐 Studio 高保真静态设计稿。"
+  wide
+>
+  <section class="journal-design-board" aria-label="读书手帐 Studio 视觉稿">
+    <header class="journal-design-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Reading Journal Studio / Visual Draft</p>
+        <h1>单张 B5 读书手帐工作台</h1>
+        <p>
+          这版只确认视觉和交互结构：浅色书桌选纸、竖向 B5 自由画布、左侧轮播素材工具箱、右侧相册与 Canva 式文字面板。
+        </p>
+      </div>
+      <div class="hero-spec-card" aria-label="设计约束">
+        <span>审美</span>
+        <strong>日系干净文学感</strong>
+        <small>自由空白页 / 真实素材来源 / 可持续添加</small>
+      </div>
+    </header>
+
+    <section class="design-screen paper-selection-screen" aria-labelledby="paper-selection-title">
+      <div class="screen-heading">
+        <p class="screen-index">Screen 01</p>
+        <h2 id="paper-selection-title">首页：在书桌上选择 B5 底纸</h2>
+        <p>
+          首页不进入复杂编辑，只做一件事：左右翻看纸张气质，选择后进入 Studio。
+        </p>
+      </div>
+
+      <div class="desk-scene" aria-label="书桌选纸设计稿">
+        <div class="desk-prop book-stack" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <strong>READING<br />NOTES</strong>
+        </div>
+        <div class="desk-prop coffee-cup" aria-hidden="true">
+          <span></span>
+        </div>
+        <img class="desk-tag brown-tag" src={brownTag} alt="" loading="lazy" />
+        <img class="desk-tag white-tag" src={whiteTag} alt="" loading="lazy" />
+        <div class="desk-pen" aria-hidden="true"></div>
+
+        <button class="paper-arrow paper-arrow-left" type="button" aria-label="往前翻页">‹</button>
+        <article class="paper-picker-card" aria-label="当前底纸预览">
+          <div class="paper-label">
+            <span>Paper 02</span>
+            <strong>浅灰网格 B5</strong>
+          </div>
+          <div class="b5-paper-preview paper-grid">
+            <div class="preview-date">07 / READING</div>
+            <div class="preview-title">空白读书手帐页</div>
+            <div class="preview-note">选择底纸后进入工作台，自由添加文字、照片、便签、胶带和贴纸。</div>
+          </div>
+          <div class="paper-dots" aria-label="底纸页码">
+            <span></span>
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <button class="primary-paper-button" type="button">选择这张纸</button>
+        </article>
+        <button class="paper-arrow paper-arrow-right" type="button" aria-label="往后翻页">›</button>
+
+        <aside class="paper-swatches" aria-label="首批底纸">
+          <span class="swatch warm"></span>
+          <span class="swatch grid active"></span>
+          <span class="swatch dot"></span>
+          <span class="swatch line"></span>
+          <span class="swatch kraft"></span>
+          <span class="swatch vellum"></span>
+        </aside>
+      </div>
+    </section>
+
+    <section class="design-screen editor-screen" aria-labelledby="editor-title">
+      <div class="screen-heading">
+        <p class="screen-index">Screen 02</p>
+        <h2 id="editor-title">编辑器：单张 B5 自由拼贴页</h2>
+        <p>
+          左侧选择素材，中间自由排版，右侧调相册、文字和图层。画布内不预设固定字段。
+        </p>
+      </div>
+
+      <div class="studio-design-shell" aria-label="读书手帐 Studio 编辑器设计稿">
+        <header class="studio-design-toolbar" aria-label="顶部操作栏">
+          <button type="button" class="active">选择</button>
+          <button type="button">文字</button>
+          <button type="button">上传</button>
+          <button type="button">撤销</button>
+          <button type="button">重做</button>
+          <button type="button">上层</button>
+          <button type="button">下层</button>
+          <button type="button">复制</button>
+          <button type="button" class="danger">删除</button>
+          <span class="zoom-chip">82%</span>
+        </header>
+
+        <div class="studio-design-grid">
+          <aside class="material-toolbox" aria-label="轮播素材工具箱">
+            <div class="panel-title">
+              <strong>素材工具箱</strong>
+              <span>Carousel Library</span>
+            </div>
+
+            <section class="tool-carousel" aria-labelledby="notes-carousel-title">
+              <div class="carousel-head">
+                <h3 id="notes-carousel-title">便签本</h3>
+                <div class="carousel-arrows" aria-label="切换便签">
+                  <button type="button">‹</button>
+                  <button type="button">›</button>
+                </div>
+              </div>
+              <button class="featured-material note-book-sample" type="button">
+                <span class="sample-note sample-note-cream">书摘卡</span>
+                <span class="sample-note sample-note-vellum">硫酸纸</span>
+                <span class="sample-note sample-note-green">索引卡</span>
+              </button>
+              <div class="material-caption">
+                <strong>米白书摘卡组</strong>
+                <span>点击或拖到页面</span>
+              </div>
+            </section>
+
+            <section class="tool-carousel" aria-labelledby="tape-carousel-title">
+              <div class="carousel-head">
+                <h3 id="tape-carousel-title">胶带</h3>
+                <div class="carousel-arrows" aria-label="切换胶带">
+                  <button type="button">‹</button>
+                  <button type="button">›</button>
+                </div>
+              </div>
+              <button class="featured-material tape-strip-sample" type="button">
+                <span class="paper-tape tape-warm"></span>
+                <span class="paper-tape tape-grid"></span>
+                <span class="paper-tape tape-vellum"></span>
+              </button>
+              <div class="material-caption">
+                <strong>低饱和纸胶带</strong>
+                <span>默认半透明叠放</span>
+              </div>
+            </section>
+
+            <section class="tool-carousel" aria-labelledby="sticker-carousel-title">
+              <div class="carousel-head">
+                <h3 id="sticker-carousel-title">贴纸</h3>
+                <div class="carousel-arrows" aria-label="切换贴纸">
+                  <button type="button">‹</button>
+                  <button type="button">›</button>
+                </div>
+              </div>
+              <button class="featured-material sticker-sample-grid" type="button">
+                <img src={roseFrame} alt="Illustcenter 花朵边框素材" loading="lazy" />
+                <img src={tapeHolder} alt="Illustcenter 胶带座素材" loading="lazy" />
+                <img src={stationerySet} alt="Illustcenter 文具素材包" loading="lazy" />
+              </button>
+              <div class="material-caption">
+                <strong>文具与花枝</strong>
+                <span>来源写入 manifest</span>
+              </div>
+            </section>
+
+            <section class="tool-carousel muted-source" aria-labelledby="source-carousel-title">
+              <div class="carousel-head">
+                <h3 id="source-carousel-title">待替换候选</h3>
+                <div class="carousel-arrows" aria-label="切换候选素材">
+                  <button type="button">‹</button>
+                  <button type="button">›</button>
+                </div>
+              </div>
+              <button class="featured-material rejected-material" type="button">
+                <img src={stickyNotes} alt="Illustcenter 彩色便利贴候选素材" loading="lazy" />
+              </button>
+              <div class="material-caption">
+                <strong>彩色便利贴</strong>
+                <span>颜色过亮，只作候选</span>
+              </div>
+            </section>
+          </aside>
+
+          <main class="b5-workspace" aria-label="单张 B5 画布区域">
+            <div class="workspace-meta">
+              <span>纸张：浅灰网格 B5</span>
+              <span>自由画布</span>
+            </div>
+            <article class="b5-editor-page" aria-label="B5 手帐页面示例">
+              <div class="page-mini-date">04 / JOURNAL</div>
+              <div class="page-side-tab">BOOK NOTE</div>
+              <div class="book-cover-card">
+                <span>BOOK</span>
+                <strong>一间<br />自己的房间</strong>
+              </div>
+              <div class="title-type-block">
+                <span>Title / 书名</span>
+                <strong>一间，只属于自己的房间</strong>
+              </div>
+              <div class="quote-card quote-card-main">
+                “一个女人如果要写小说，那她必须有钱和一间自己的房间。”
+              </div>
+              <div class="vellum-note">
+                这张硫酸纸便签可以叠在照片、书摘或地图上，透明度在右侧调。
+              </div>
+              <div class="free-text-block">
+                <strong>今天的读书感想</strong>
+                <p>页面是空白的，可以像拼贴一样把图片、摘抄、批注和小标签自由组合。</p>
+              </div>
+              <div class="image-placeholder">
+                <span>相册图片</span>
+              </div>
+              <span class="canvas-tape tape-one"></span>
+              <span class="canvas-tape tape-two"></span>
+              <span class="canvas-tape tape-three"></span>
+              <img class="page-rose-sticker" src={roseFrame} alt="Illustcenter 花朵边框素材" loading="lazy" />
+              <img class="page-brown-tag" src={brownTag} alt="Illustcenter 牛皮纸标签素材" loading="lazy" />
+              <div class="selected-box" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </article>
+            <div class="workspace-actions">
+              <button type="button">保存草稿</button>
+              <button type="button" class="publish">发布</button>
+            </div>
+          </main>
+
+          <aside class="right-inspector" aria-label="相册、文字和属性面板">
+            <section class="inspector-card album-card" aria-labelledby="album-title">
+              <div class="panel-title compact">
+                <strong id="album-title">我的相册</strong>
+                <span>Local Album</span>
+              </div>
+              <div class="album-grid">
+                <button type="button" class="album-upload">上传</button>
+                <button type="button" class="album-thumb paper-photo">书封</button>
+                <button type="button" class="album-thumb coffee-photo">咖啡</button>
+                <button type="button" class="album-thumb note-photo">截图</button>
+              </div>
+            </section>
+
+            <section class="inspector-card text-card" aria-labelledby="text-title">
+              <div class="panel-title compact">
+                <strong id="text-title">文字设置</strong>
+                <span>Canva Style</span>
+              </div>
+              <div class="text-presets" aria-label="文字预设">
+                <button type="button" class="preset-serif">书名标题</button>
+                <button type="button" class="preset-wenkai active">正文摘抄</button>
+                <button type="button" class="preset-hand">手写金句</button>
+                <button type="button" class="preset-label">标签小字</button>
+              </div>
+              <label>
+                字体
+                <select>
+                  <option>霞鹜文楷 LXGW WenKai</option>
+                  <option>Noto Serif SC</option>
+                  <option>Ma Shan Zheng</option>
+                  <option>Smiley Sans</option>
+                </select>
+              </label>
+              <div class="control-grid">
+                <label>字号 <input type="text" value="22" readonly /></label>
+                <label>透明 <input type="text" value="92%" readonly /></label>
+                <label>行距 <input type="text" value="1.45" readonly /></label>
+                <label>角度 <input type="text" value="-2°" readonly /></label>
+              </div>
+              <div class="color-row" aria-label="文字颜色">
+                <span class="ink active"></span>
+                <span class="moss"></span>
+                <span class="brown"></span>
+                <span class="rose"></span>
+              </div>
+            </section>
+
+            <section class="inspector-card layer-card" aria-labelledby="layers-title">
+              <div class="panel-title compact">
+                <strong id="layers-title">图层</strong>
+                <span>Layers</span>
+              </div>
+              <ol class="layer-list">
+                <li><span>08</span> 选中：硫酸纸便签</li>
+                <li><span>07</span> 花枝贴纸</li>
+                <li><span>06</span> 引用卡片</li>
+                <li><span>05</span> 相册图片</li>
+              </ol>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="design-screen source-screen" aria-labelledby="source-title">
+      <div class="screen-heading">
+        <p class="screen-index">Source Map</p>
+        <h2 id="source-title">字体与素材来源要写进 manifest</h2>
+        <p>
+          设计稿里出现的素材必须有来源和授权记录；Pinterest 和小红书只当灵感，不作为内置素材来源。
+        </p>
+      </div>
+      <div class="source-grid">
+        <article>
+          <strong>字体</strong>
+          <span>LXGW WenKai / Smiley Sans / Ma Shan Zheng / Noto Serif SC</span>
+        </article>
+        <article>
+          <strong>插图素材</strong>
+          <span>Illustcenter 免费 PNG，记录来源并遵守数量和再分发限制。</span>
+        </article>
+        <article>
+          <strong>纸张和胶带</strong>
+          <span>实现阶段从 DigitalScrapbook 等来源逐个核对授权后加入。</span>
+        </article>
+      </div>
+    </section>
+  </section>
+</BaseLayout>
