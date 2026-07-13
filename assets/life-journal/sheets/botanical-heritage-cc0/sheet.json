@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "botanical-heritage-cc0",
+  "name": "植物博物卡：旧书花卉",
+  "category": "贴纸",
+  "style": ["日系", "植物博物", "旧书页", "文学感"],
+  "cover": "plum-blossoms.jpg",
+  "visibility": "public-page-use",
+  "allowedContexts": ["local-studio", "public-page-use"],
+  "source": {
+    "provider": "Rawpixel Public Domain",
+    "sourceCollection": "https://www.rawpixel.com/public-domain",
+    "termsUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "licenseNote": "Each item below is marked Public Domain / CC0 by Rawpixel. Low-resolution JPEGs are stored for the Studio; keep the original item page in the manifest for provenance.",
+    "downloadedAt": "2026-07-13"
+  },
+  "defaultPlacement": {
+    "width": 112,
+    "height": 158,
+    "rotation": -2
+  },
+  "items": [
+    {
+      "id": "botanical-plum-blossoms",
+      "name": "梅花枝",
+      "file": "plum-blossoms.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2805512/free-illustration-image-flower-japanese-vintage",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BkMTU1LTA0LWdsb3kuanBn.jpg",
+      "tags": ["梅花", "日式", "旧书页"]
+    },
+    {
+      "id": "botanical-blue-lotus",
+      "name": "蓝色莲花",
+      "file": "blue-lotus.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880380/free-illustration-image-flower-blue-vintage",
+      "sourceFile": "https://images.rawpixel.com/image_social_square/cHJpdmF0ZS9zdGF0aWMvaW1hZ2VzL3dlYnNpdGUvMjAyMi0wNS9wZDExNC0zMTEtYW9tLmpwZw.jpg",
+      "tags": ["莲花", "蓝色", "古典"]
+    },
+    {
+      "id": "botanical-tiger-lily",
+      "name": "虎百合",
+      "file": "tiger-lily.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880227/free-illustration-image-flower-botanical-lily",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3BkMTE0LTE0Mi1hb20uanBn.jpg",
+      "tags": ["百合", "植物图鉴", "复古"]
+    },
+    {
+      "id": "botanical-japanese-camellia",
+      "name": "日式山茶",
+      "file": "japanese-camellia.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880390/free-illustration-image-flower-pink-spring",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGQxMTQtMjIzLWFvbS5qcGc.jpg",
+      "tags": ["山茶", "日式", "粉红", "植物图鉴"]
+    },
+    {
+      "id": "botanical-red-camellia",
+      "name": "红色山茶",
+      "file": "red-camellia.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880523/free-illustration-image-flower-japanese-camellia",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGQxMTQtMjE2LWFvbS5qcGc.jpg",
+      "tags": ["山茶", "日式", "红色", "植物图鉴"]
+    },
+    {
+      "id": "botanical-blue-chrysanthemum",
+      "name": "蓝色菊花",
+      "file": "blue-chrysanthemum.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880474/free-illustration-image-flower-blue-chrysanthemum",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGQxMTQtMjM2LWFvbS5qcGc.jpg",
+      "tags": ["菊花", "蓝色", "植物图鉴"]
+    },
+    {
+      "id": "botanical-blue-sage",
+      "name": "蓝色鼠尾草",
+      "file": "blue-sage.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880291/free-illustration-image-blue-flower-sage",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGQxMTQtMjQyLWFvbS5qcGc.jpg",
+      "tags": ["鼠尾草", "蓝色", "植物图鉴"]
+    },
+    {
+      "id": "botanical-pink-passion-flower",
+      "name": "粉色西番莲",
+      "file": "pink-passion-flower.jpg",
+      "sourceItemPage": "https://www.rawpixel.com/image/2880509/free-illustration-image-flower-watercolor-flowers-botanical",
+      "sourceFile": "https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGQxMTQtMjM3LWFvbS5qcGc.jpg",
+      "tags": ["西番莲", "粉色", "植物图鉴"]
+    }
+  ]
+}

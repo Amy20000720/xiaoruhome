@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "id": "sweets-line-art-color",
+  "name": "甜点图标：线稿彩色",
+  "category": "贴纸",
+  "style": ["日系", "线稿", "低饱和", "生活记录"],
+  "cover": "rdesign_16626.png",
+  "visibility": "studio-private",
+  "allowedContexts": ["local-studio", "public-page-use"],
+  "source": {
+    "provider": "Illustcenter",
+    "sourcePage": "https://illustcenter.com/en/2026/03/01/sweets_icon/",
+    "termsUrl": "https://illustcenter.com/en/terms-of-use/",
+    "licenseNote": "Free for website use. Keep this source as a private Studio sheet; do not redistribute the original or modified source files. Illustcenter permits up to 20 illustrations used at one time.",
+    "usedIllustrationCount": 20,
+    "downloadedAt": "2026-07-13"
+  },
+  "defaultPlacement": {
+    "width": 96,
+    "height": 72,
+    "rotation": 0
+  },
+  "items": [
+    {
+      "id": "sweets-strawberry-shortcake",
+      "name": "草莓奶油蛋糕",
+      "file": "rdesign_16626.png",
+      "sourceItemPage": "https://illustcenter.com/en/2023/12/02/rdesign_16626/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2023/12/rdesign_16626.png",
+      "tags": ["甜点", "蛋糕", "草莓"]
+    },
+    {
+      "id": "sweets-chocolate-cake",
+      "name": "巧克力蛋糕",
+      "file": "rdesign_17033.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17033/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17033.png",
+      "tags": ["甜点", "蛋糕", "巧克力"]
+    },
+    {
+      "id": "sweets-chocolate-bar",
+      "name": "巧克力块",
+      "file": "rdesign_16800.png",
+      "sourceItemPage": "https://illustcenter.com/en/2023/12/19/rdesign_16800/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2023/12/rdesign_16800.png",
+      "tags": ["甜点", "巧克力"]
+    },
+    {
+      "id": "sweets-macaron",
+      "name": "马卡龙",
+      "file": "rdesign_16801.png",
+      "sourceItemPage": "https://illustcenter.com/en/2023/12/19/rdesign_16801/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2023/12/rdesign_16801.png",
+      "tags": ["甜点", "马卡龙"]
+    },
+    {
+      "id": "sweets-roll-cake",
+      "name": "瑞士卷",
+      "file": "rdesign_17034.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17034/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17034.png",
+      "tags": ["甜点", "蛋糕"]
+    },
+    {
+      "id": "sweets-cheesecake",
+      "name": "芝士蛋糕",
+      "file": "rdesign_17035.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17035/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17035.png",
+      "tags": ["甜点", "蛋糕"]
+    },
+    {
+      "id": "sweets-cupcake",
+      "name": "纸杯蛋糕",
+      "file": "rdesign_16931.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/01/18/rdesign_16931/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/01/rdesign_16931.png",
+      "tags": ["甜点", "蛋糕"]
+    },
+    {
+      "id": "sweets-soft-serve",
+      "name": "冰淇淋",
+      "file": "rdesign_16620.png",
+      "sourceItemPage": "https://illustcenter.com/en/2023/12/02/rdesign_16620/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2023/12/rdesign_16620.png",
+      "tags": ["甜点", "冰淇淋"]
+    },
+    {
+      "id": "sweets-pudding",
+      "name": "布丁",
+      "file": "rdesign_17036.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17036/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17036.png",
+      "tags": ["甜点", "布丁"]
+    },
+    {
+      "id": "sweets-baumkuchen",
+      "name": "年轮蛋糕",
+      "file": "rdesign_17037.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17037/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17037.png",
+      "tags": ["甜点", "蛋糕"]
+    },
+    {
+      "id": "sweets-eclair",
+      "name": "闪电泡芙",
+      "file": "rdesign_17038.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17038/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17038.png",
+      "tags": ["甜点", "泡芙"]
+    },
+    {
+      "id": "sweets-donut",
+      "name": "甜甜圈",
+      "file": "rdesign_16704.png",
+      "sourceItemPage": "https://illustcenter.com/en/2023/12/11/rdesign_16704/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2023/12/rdesign_16704.png",
+      "tags": ["甜点", "甜甜圈"]
+    },
+    {
+      "id": "sweets-chocolate-donut",
+      "name": "巧克力甜甜圈",
+      "file": "rdesign_16627.png",
+      "sourceItemPage": "https://illustcenter.com/en/2023/12/02/rdesign_16627/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2023/12/rdesign_16627.png",
+      "tags": ["甜点", "巧克力", "甜甜圈"]
+    },
+    {
+      "id": "sweets-marshmallow",
+      "name": "棉花糖",
+      "file": "rdesign_16942.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/01/19/rdesign_16942/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/01/rdesign_16942.png",
+      "tags": ["甜点", "棉花糖"]
+    },
+    {
+      "id": "sweets-cream-puff",
+      "name": "奶油泡芙",
+      "file": "rdesign_17039.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17039/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17039.png",
+      "tags": ["甜点", "泡芙"]
+    },
+    {
+      "id": "sweets-maritozzo",
+      "name": "意式奶油面包",
+      "file": "rdesign_17040.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17040/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17040.png",
+      "tags": ["甜点", "面包"]
+    },
+    {
+      "id": "sweets-mont-blanc",
+      "name": "蒙布朗",
+      "file": "rdesign_17041.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/02/rdesign_17041/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17041.png",
+      "tags": ["甜点", "蛋糕"]
+    },
+    {
+      "id": "sweets-square-cookie",
+      "name": "方形饼干",
+      "file": "rdesign_16929.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/01/18/rdesign_16929/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/01/rdesign_16929.png",
+      "tags": ["甜点", "饼干"]
+    },
+    {
+      "id": "sweets-cookie",
+      "name": "曲奇",
+      "file": "rdesign_16930.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/01/18/rdesign_16930/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/01/rdesign_16930.png",
+      "tags": ["甜点", "饼干"]
+    },
+    {
+      "id": "sweets-tiramisu",
+      "name": "提拉米苏",
+      "file": "rdesign_17058.png",
+      "sourceItemPage": "https://illustcenter.com/en/2024/02/06/rdesign_17058/",
+      "sourceFile": "https://illustcenter.com/wp-content/uploads/2024/02/rdesign_17058.png",
+      "tags": ["甜点", "咖啡", "蛋糕"]
+    }
+  ]
+}
