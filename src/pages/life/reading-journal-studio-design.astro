@@ -1,14 +1,57 @@
 ---
+import { readFile, readdir } from "node:fs/promises";
+import { join } from "node:path";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { withBase } from "../../lib/paths";
 import "../../styles/reading-journal-studio-design.css";
 
-const stationerySet = withBase("/assets/life-journal/illustcenter/stationery-set.png");
-const roseFrame = withBase("/assets/life-journal/illustcenter/rose-frame.png");
-const stickyNotes = withBase("/assets/life-journal/illustcenter/sticky-notes.png");
 const brownTag = withBase("/assets/life-journal/illustcenter/brown-tag.png");
 const whiteTag = withBase("/assets/life-journal/illustcenter/white-tag.png");
-const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png");
+
+type MaterialItem = {
+  id: string;
+  name: string;
+  file: string;
+  tags: string[];
+};
+
+type MaterialSheetManifest = {
+  id: string;
+  name: string;
+  category: string;
+  style: string[];
+  source: { provider: string };
+  items: MaterialItem[];
+};
+
+const sheetsDirectory = join(process.cwd(), "public", "assets", "life-journal", "sheets");
+const sheetDirectories = (await readdir(sheetsDirectory, { withFileTypes: true }))
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name);
+
+const materialSheets = (
+  await Promise.all(
+    sheetDirectories.map(async (directory) => {
+      const manifestPath = join(sheetsDirectory, directory, "sheet.json");
+      const manifest = JSON.parse(await readFile(manifestPath, "utf8")) as MaterialSheetManifest;
+
+      return {
+        ...manifest,
+        items: manifest.items.map((item) => ({
+          ...item,
+          src: withBase(`/assets/life-journal/sheets/${directory}/${item.file}`)
+        }))
+      };
+    })
+  )
+).sort((left, right) => left.id.localeCompare(right.id));
+
+const initialMaterialSheet = materialSheets[0];
+const initialMaterialItem = initialMaterialSheet?.items[0];
+
+if (!initialMaterialItem) {
+  throw new Error("Reading Journal Studio requires at least one material sheet with an item.");
+}
 ---
 
 <BaseLayout
@@ -115,80 +158,58 @@ const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png")
           <aside class="material-toolbox" aria-label="轮播素材工具箱">
             <div class="panel-title">
               <strong>素材工具箱</strong>
-              <span>Carousel Library</span>
+              <span>Sheet Library</span>
             </div>
 
-            <section class="tool-carousel" aria-labelledby="notes-carousel-title">
+            <section class="tool-carousel material-sheet-explorer" data-sheet-explorer aria-labelledby="material-sheet-title">
               <div class="carousel-head">
-                <h3 id="notes-carousel-title">便签本</h3>
-                <div class="carousel-arrows" aria-label="切换便签">
-                  <button type="button">‹</button>
-                  <button type="button">›</button>
+                <h3 id="material-sheet-title">实物贴纸 Sheets</h3>
+                <div class="carousel-arrows" aria-label="翻页浏览素材">
+                  <button type="button" data-material-page="previous" aria-label="上一页素材" title="上一页素材">‹</button>
+                  <button type="button" data-material-page="next" aria-label="下一页素材" title="下一页素材">›</button>
                 </div>
               </div>
-              <button class="featured-material note-book-sample" type="button">
-                <span class="sample-note sample-note-cream">书摘卡</span>
-                <span class="sample-note sample-note-vellum">硫酸纸</span>
-                <span class="sample-note sample-note-green">索引卡</span>
-              </button>
-              <div class="material-caption">
-                <strong>米白书摘卡组</strong>
-                <span>点击或拖到页面</span>
-              </div>
-            </section>
 
-            <section class="tool-carousel" aria-labelledby="tape-carousel-title">
-              <div class="carousel-head">
-                <h3 id="tape-carousel-title">胶带</h3>
-                <div class="carousel-arrows" aria-label="切换胶带">
-                  <button type="button">‹</button>
-                  <button type="button">›</button>
-                </div>
+              <div class="material-sheet-tabs" role="tablist" aria-label="素材 sheet 选择">
+                {
+                  materialSheets.map((sheet, index) => (
+                    <button
+                      type="button"
+                      class:list={{ "material-sheet-tab": true, active: index === 0 }}
+                      data-material-sheet={index}
+                      role="tab"
+                      aria-selected={index === 0 ? "true" : "false"}
+                    >
+                      {sheet.name}
+                    </button>
+                  ))
+                }
               </div>
-              <button class="featured-material tape-strip-sample" type="button">
-                <span class="paper-tape tape-warm"></span>
-                <span class="paper-tape tape-grid"></span>
-                <span class="paper-tape tape-vellum"></span>
-              </button>
-              <div class="material-caption">
-                <strong>低饱和纸胶带</strong>
-                <span>默认半透明叠放</span>
-              </div>
-            </section>
 
-            <section class="tool-carousel" aria-labelledby="sticker-carousel-title">
-              <div class="carousel-head">
-                <h3 id="sticker-carousel-title">贴纸</h3>
-                <div class="carousel-arrows" aria-label="切换贴纸">
-                  <button type="button">‹</button>
-                  <button type="button">›</button>
-                </div>
-              </div>
-              <button class="featured-material sticker-sample-grid" type="button">
-                <img src={roseFrame} alt="Illustcenter 花朵边框素材" loading="lazy" />
-                <img src={tapeHolder} alt="Illustcenter 胶带座素材" loading="lazy" />
-                <img src={stationerySet} alt="Illustcenter 文具素材包" loading="lazy" />
+              <button class="featured-material sheet-featured-material" type="button" data-featured-material aria-label={`当前选择：${initialMaterialItem.name}`}>
+                <img src={initialMaterialItem.src} alt={initialMaterialItem.name} data-featured-image loading="lazy" />
               </button>
-              <div class="material-caption">
-                <strong>文具与花枝</strong>
-                <span>来源写入 manifest</span>
-              </div>
-            </section>
 
-            <section class="tool-carousel muted-source" aria-labelledby="source-carousel-title">
-              <div class="carousel-head">
-                <h3 id="source-carousel-title">待替换候选</h3>
-                <div class="carousel-arrows" aria-label="切换候选素材">
-                  <button type="button">‹</button>
-                  <button type="button">›</button>
-                </div>
+              <div class="material-thumbnail-grid" data-material-grid>
+                {
+                  initialMaterialSheet.items.slice(0, 4).map((item, index) => (
+                    <button
+                      type="button"
+                      class:list={{ "material-thumbnail": true, active: index === 0 }}
+                      data-material-index={index}
+                      aria-pressed={index === 0 ? "true" : "false"}
+                      aria-label={`选择${item.name}`}
+                    >
+                      <img src={item.src} alt="" loading="lazy" />
+                    </button>
+                  ))
+                }
               </div>
-              <button class="featured-material rejected-material" type="button">
-                <img src={stickyNotes} alt="Illustcenter 彩色便利贴候选素材" loading="lazy" />
-              </button>
+
               <div class="material-caption">
-                <strong>彩色便利贴</strong>
-                <span>颜色过亮，只作候选</span>
+                <strong data-sheet-name>{initialMaterialSheet.name}</strong>
+                <span data-material-name>{initialMaterialItem.name}</span>
+                <span data-material-page-counter>1 / {Math.ceil(initialMaterialSheet.items.length / 4)}</span>
               </div>
             </section>
           </aside>
@@ -212,9 +233,6 @@ const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png")
               <div class="quote-card quote-card-main">
                 “一个女人如果要写小说，那她必须有钱和一间自己的房间。”
               </div>
-              <div class="vellum-note">
-                这张硫酸纸便签可以叠在照片、书摘或地图上，透明度在右侧调。
-              </div>
               <div class="free-text-block">
                 <strong>今天的读书感想</strong>
                 <p>页面是空白的，可以像拼贴一样把图片、摘抄、批注和小标签自由组合。</p>
@@ -225,9 +243,8 @@ const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png")
               <span class="canvas-tape tape-one"></span>
               <span class="canvas-tape tape-two"></span>
               <span class="canvas-tape tape-three"></span>
-              <img class="page-rose-sticker" src={roseFrame} alt="Illustcenter 花朵边框素材" loading="lazy" />
-              <img class="page-brown-tag" src={brownTag} alt="Illustcenter 牛皮纸标签素材" loading="lazy" />
-              <div class="selected-box" aria-hidden="true">
+              <img class="page-sheet-sticker" src={initialMaterialItem.src} alt={initialMaterialItem.name} data-canvas-material loading="lazy" />
+              <div class="selected-box selected-material-box" aria-hidden="true">
                 <span></span><span></span><span></span><span></span>
               </div>
             </article>
@@ -291,7 +308,7 @@ const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png")
                 <span>Layers</span>
               </div>
               <ol class="layer-list">
-                <li><span>08</span> 选中：硫酸纸便签</li>
+                <li><span>08</span> 选中：<span data-layer-selected-name>{initialMaterialItem.name}</span></li>
                 <li><span>07</span> 花枝贴纸</li>
                 <li><span>06</span> 引用卡片</li>
                 <li><span>05</span> 相册图片</li>
@@ -317,7 +334,7 @@ const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png")
         </article>
         <article>
           <strong>插图素材</strong>
-          <span>Illustcenter 免费 PNG，记录来源并遵守数量和再分发限制。</span>
+          <span>Illustcenter 图标与 Rawpixel CC0 植物卡，逐项写入 sheet manifest。</span>
         </article>
         <article>
           <strong>纸张和胶带</strong>
@@ -327,3 +344,110 @@ const tapeHolder = withBase("/assets/life-journal/illustcenter/tape-holder.png")
     </section>
   </section>
 </BaseLayout>
+
+<script is:inline define:vars={{ materialSheets }}>
+  const itemsPerPage = 4;
+  const explorer = document.querySelector("[data-sheet-explorer]");
+
+  if (explorer) {
+    const featuredMaterial = explorer.querySelector("[data-featured-material]");
+    const featuredImage = explorer.querySelector("[data-featured-image]");
+    const materialGrid = explorer.querySelector("[data-material-grid]");
+    const sheetName = explorer.querySelector("[data-sheet-name]");
+    const materialName = explorer.querySelector("[data-material-name]");
+    const pageCounter = explorer.querySelector("[data-material-page-counter]");
+    const canvasMaterial = document.querySelector("[data-canvas-material]");
+    const selectedLayerName = document.querySelector("[data-layer-selected-name]");
+    const state = { sheetIndex: 0, pageIndex: 0, selectedItemIndex: 0 };
+
+    const activeSheet = () => materialSheets[state.sheetIndex];
+    const activePageItems = () => {
+      const start = state.pageIndex * itemsPerPage;
+      return activeSheet().items.slice(start, start + itemsPerPage);
+    };
+
+    const selectItem = (item, itemIndex) => {
+      state.selectedItemIndex = itemIndex;
+      featuredImage.src = item.src;
+      featuredImage.alt = item.name;
+      featuredMaterial.setAttribute("aria-label", `当前选择：${item.name}`);
+      materialName.textContent = item.name;
+      canvasMaterial.src = item.src;
+      canvasMaterial.alt = item.name;
+      selectedLayerName.textContent = item.name;
+    };
+
+    const render = () => {
+      const sheet = activeSheet();
+      const pageItems = activePageItems();
+      const totalPages = Math.ceil(sheet.items.length / itemsPerPage);
+
+      sheetName.textContent = sheet.name;
+      pageCounter.textContent = `${state.pageIndex + 1} / ${totalPages}`;
+      explorer.querySelectorAll("[data-material-sheet]").forEach((button) => {
+        const isActive = Number(button.dataset.materialSheet) === state.sheetIndex;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-selected", String(isActive));
+      });
+
+      materialGrid.replaceChildren(
+        ...pageItems.map((item, index) => {
+          const itemIndex = state.pageIndex * itemsPerPage + index;
+          const button = document.createElement("button");
+          const image = document.createElement("img");
+          const isSelected = itemIndex === state.selectedItemIndex;
+
+          button.type = "button";
+          button.className = "material-thumbnail";
+          button.classList.toggle("active", isSelected);
+          button.dataset.materialIndex = String(itemIndex);
+          button.setAttribute("aria-label", `选择${item.name}`);
+          button.setAttribute("aria-pressed", String(isSelected));
+          image.src = item.src;
+          image.alt = "";
+          image.loading = "lazy";
+          button.append(image);
+          return button;
+        })
+      );
+
+      const selectedItem = sheet.items[state.selectedItemIndex] ?? pageItems[0];
+      selectItem(selectedItem, state.selectedItemIndex);
+    };
+
+    explorer.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const sheetButton = target.closest("[data-material-sheet]");
+      if (sheetButton) {
+        state.sheetIndex = Number(sheetButton.getAttribute("data-material-sheet"));
+        state.pageIndex = 0;
+        state.selectedItemIndex = 0;
+        render();
+        return;
+      }
+
+      const pageButton = target.closest("[data-material-page]");
+      if (pageButton) {
+        const totalPages = Math.ceil(activeSheet().items.length / itemsPerPage);
+        const direction = pageButton.getAttribute("data-material-page") === "next" ? 1 : -1;
+        state.pageIndex = (state.pageIndex + direction + totalPages) % totalPages;
+        state.selectedItemIndex = state.pageIndex * itemsPerPage;
+        render();
+        return;
+      }
+
+      const materialButton = target.closest("[data-material-index]");
+      if (materialButton) {
+        const itemIndex = Number(materialButton.getAttribute("data-material-index"));
+        selectItem(activeSheet().items[itemIndex], itemIndex);
+        materialGrid.querySelectorAll("[data-material-index]").forEach((button) => {
+          const isSelected = Number(button.getAttribute("data-material-index")) === itemIndex;
+          button.classList.toggle("active", isSelected);
+          button.setAttribute("aria-pressed", String(isSelected));
+        });
+      }
+    });
+  }
+</script>
