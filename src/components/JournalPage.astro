@@ -2,6 +2,7 @@
 import JournalElement from "./JournalElement.astro";
 import type { CollectionEntry } from "astro:content";
 import type { JournalLayout } from "../lib/journalLayout";
+import "../styles/reading-journal-public.css";
 
 interface Props {
   note: CollectionEntry<"life">;
@@ -17,12 +18,13 @@ const dateLabel = note.data.date.toLocaleDateString("zh-CN", {
 });
 const theme = layout?.page.theme ?? "candy-y2k-grid";
 const elements = layout?.elements ?? [];
+const isB5ReadingJournal = theme === "reading-journal-b5";
 ---
 
 <section class:list={["journal-shell", preview && "journal-shell-preview"]} aria-label={`${note.data.title} 手帐页`}>
   <div class={`journal-page journal-theme-${theme}`}>
     <div class="journal-paper-layer" aria-hidden="true"></div>
-    <div class="journal-entry-core">
+    <div class:list={["journal-entry-core", isB5ReadingJournal && "journal-entry-core-b5"]}>
       <div class="journal-entry-date">
         <span>{dateLabel}</span>
         {note.data.mood && <span>{note.data.mood}</span>}

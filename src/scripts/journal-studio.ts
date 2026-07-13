@@ -1,19 +1,14 @@
+import { Canvas, FabricImage, FabricObject, Textbox } from "fabric";
 import {
-  Canvas,
-  FabricImage,
-  FabricObject,
-  FabricText,
-  Group,
-  Rect,
-  Textbox,
-} from "fabric";
-import {
-  getJournalAsset,
-  JOURNAL_SPREAD_HEIGHT,
-  JOURNAL_SPREAD_WIDTH,
-  type JournalAsset,
+  JOURNAL_PAGE_HEIGHT,
+  JOURNAL_PAGE_WIDTH,
 } from "../lib/journalAssets";
-import type { JournalElement, JournalLayout } from "../lib/journalLayout";
+import type {
+  JournalElement,
+  JournalLayout,
+  JournalTextFont,
+  JournalTextStyle,
+} from "../lib/journalLayout";
 import {
   getLastDraftId,
   loadDraft,
@@ -21,20 +16,66 @@ import {
   type JournalDraftMeta,
 } from "./journal-storage";
 
+const DRAFT_ID = "reading-journal-b5-current";
+const SHEET_PAGE_SIZE = 6;
+const MAX_LOCAL_IMAGE_BYTES = 7 * 1024 * 1024;
+
+const textFontFamilies: Record<JournalTextFont, string> = {
+  serif: "Noto Serif SC, Songti SC, STSong, serif",
+  sans: "Noto Sans SC, PingFang SC, Hiragino Sans GB, sans-serif",
+  wenkai: "LXGW WenKai, KaiTi, STKaiti, cursive",
+  hand: "Ma Shan Zheng, KaiTi, STKaiti, cursive",
+};
+
+interface MaterialItem {
+  id: string;
+  name: string;
+  src: string;
+  sourceItemPage: string;
+  tags: string[];
+}
+
+interface MaterialSheet {
+  id: string;
+  name: string;
+  category: string;
+  style: string[];
+  source: {
+    provider: string;
+    termsUrl: string;
+    licenseNote: string;
+  };
+  defaultPlacement: {
+    width: number;
+    height: number;
+    rotation: number;
+  };
+  items: MaterialItem[];
+}
+
+interface StudioBootstrap {
+  base: string;
+  sheets: MaterialSheet[];
+}
+
 interface StudioObjectMeta {
   id: string;
-  type: JournalElement["type"] | "background";
+  type: JournalElement["type"];
   label: string;
-  assetId?: string;
-  text?: string;
   src?: string;
   alt?: string;
-  locked?: boolean;
+  assetId?: string;
+  textStyle?: JournalTextStyle;
 }
 
 type StudioObject = FabricObject & {
   journalMeta?: StudioObjectMeta;
   text?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  fill?: string;
+  textAlign?: "left" | "center" | "right";
+  lineHeight?: number;
 };
 
 interface StudioFields {
@@ -46,36 +87,88 @@ interface StudioFields {
   location: HTMLInputElement;
   slug: HTMLInputElement;
   body: HTMLTextAreaElement;
-  bookTitle: HTMLInputElement;
-  author: HTMLInputElement;
-  output: HTMLTextAreaElement;
-  selectedName: HTMLInputElement;
   selectedX: HTMLInputElement;
   selectedY: HTMLInputElement;
   selectedWidth: HTMLInputElement;
   selectedAngle: HTMLInputElement;
+  selectedOpacity: HTMLInputElement;
+  textFont: HTMLSelectElement;
+  textSize: HTMLInputElement;
+  textColor: HTMLInputElement;
+  textAlign: HTMLSelectElement;
+  selectedName: HTMLOutputElement;
+  status: HTMLElement;
+  publicLink: HTMLAnchorElement;
 }
 
-const DRAFT_ID = "reading-spread-current";
+interface TextDefaults {
+  font: JournalTextFont;
+  fontSize: number;
+  color: string;
+  align: "left" | "center" | "right";
+}
+
 const root = document.querySelector<HTMLElement>("[data-journal-studio]");
 const canvasElement = document.querySelector<HTMLCanvasElement>("#journal-canvas");
 
 if (root && canvasElement) {
+  const bootstrap = readBootstrap();
   const canvas = new Canvas(canvasElement, {
-    width: JOURNAL_SPREAD_WIDTH,
-    height: JOURNAL_SPREAD_HEIGHT,
-    backgroundColor: "#fffdf7",
+    width: JOURNAL_PAGE_WIDTH,
+    height: JOURNAL_PAGE_HEIGHT,
     preserveObjectStacking: true,
     selection: true,
   });
   const fields = getFields();
+  const textDefaults: TextDefaults = {
+    font: "serif",
+    fontSize: 22,
+    color: "#3d3a32",
+    align: "left",
+  };
+  let activeSheetIndex = 0;
+  let sheetPage = 0;
 
-  seedReadingTemplate(canvas);
-  bindActions(canvas, fields);
-  bindCanvasState(canvas, fields);
-  updateLayerList(canvas);
-  updateInspector(canvas, fields);
-  restoreLastDraft(canvas, fields).catch(() => undefined);
+  renderMaterialBrowser(
+    bootstrap,
+    canvas,
+    () => activeSheetIndex,
+    () => sheetPage,
+    (index) => {
+      activeSheetIndex = index;
+      sheetPage = 0;
+    },
+    (next) => {
+      sheetPage = next;
+    },
+  );
+  bindActions(canvas, fields, bootstrap, textDefaults, () => activeSheetIndex, () => sheetPage, (index) => {
+    activeSheetIndex = index;
+    sheetPage = 0;
+  }, (next) => {
+    sheetPage = next;
+  });
+  bindCanvasState(canvas, fields, textDefaults);
+  bindInspector(canvas, fields, textDefaults);
+  updateLayerList(canvas, fields);
+  updateInspector(canvas, fields, textDefaults);
+  restoreLastDraft(canvas, fields, textDefaults).catch((error) => setStatus(fields, errorMessage(error), "error"));
+}
+
+function readBootstrap(): StudioBootstrap {
+  const node = document.getElementById("journal-material-sheets");
+  if (!node?.textContent) {
+    return { base: "/", sheets: [] };
+  }
+  try {
+    const data = JSON.parse(node.textContent) as Partial<StudioBootstrap>;
+    return {
+      base: typeof data.base === "string" ? data.base : "/",
+      sheets: Array.isArray(data.sheets) ? data.sheets : [],
+    };
+  } catch {
+    return { base: "/", sheets: [] };
+  }
 }
 
 function getInput(id: string) {
@@ -94,7 +187,21 @@ function getTextArea(id: string) {
   return textarea;
 }
 
+function getSelect(id: string) {
+  const select = document.getElementById(id);
+  if (!(select instanceof HTMLSelectElement)) {
+    throw new Error(`Missing select #${id}`);
+  }
+  return select;
+}
+
 function getFields(): StudioFields {
+  const selectedName = document.querySelector<HTMLOutputElement>("[data-selected-name]");
+  const status = document.querySelector<HTMLElement>("[data-studio-status]");
+  const publicLink = document.querySelector<HTMLAnchorElement>("[data-public-link]");
+  if (!selectedName || !status || !publicLink) {
+    throw new Error("Missing Studio status controls.");
+  }
   return {
     title: getInput("journal-title"),
     date: getInput("journal-date"),
@@ -104,62 +211,73 @@ function getFields(): StudioFields {
     location: getInput("journal-location"),
     slug: getInput("journal-slug"),
     body: getTextArea("journal-body"),
-    bookTitle: getInput("journal-book-title"),
-    author: getInput("journal-author"),
-    output: getTextArea("journal-export"),
-    selectedName: getInput("selected-name"),
     selectedX: getInput("selected-x"),
     selectedY: getInput("selected-y"),
     selectedWidth: getInput("selected-width"),
     selectedAngle: getInput("selected-angle"),
+    selectedOpacity: getInput("selected-opacity"),
+    textFont: getSelect("text-font"),
+    textSize: getInput("text-size"),
+    textColor: getInput("text-color"),
+    textAlign: getSelect("text-align"),
+    selectedName,
+    status,
+    publicLink,
   };
 }
 
-function bindActions(canvas: Canvas, fields: StudioFields) {
-  document.querySelectorAll<HTMLElement>("[data-action]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const action = button.dataset.action;
-      if (action === "add-text") addText(canvas);
-      if (action === "add-quote") addQuoteCard(canvas);
-      if (action === "add-note") addAsset(canvas, "note-pink").catch(showError);
+function bindActions(
+  canvas: Canvas,
+  fields: StudioFields,
+  bootstrap: StudioBootstrap,
+  defaults: TextDefaults,
+  getSheetIndex: () => number,
+  getSheetPage: () => number,
+  setSheetIndex: (index: number) => void,
+  setSheetPage: (page: number) => void,
+) {
+  document.querySelectorAll<HTMLElement>("[data-action]").forEach((control) => {
+    control.addEventListener("click", () => {
+      const action = control.dataset.action;
+      if (action === "select") {
+        canvas.discardActiveObject();
+        canvas.requestRenderAll();
+      }
+      if (action === "add-text") addText(canvas, defaults);
+      if (action === "duplicate") duplicateActive(canvas).catch((error) => setStatus(fields, errorMessage(error), "error"));
       if (action === "delete") deleteActive(canvas);
-      if (action === "bring-front") bringActiveForward(canvas);
-      if (action === "send-back") sendActiveBackward(canvas);
-      if (action === "save") saveCurrentDraft(canvas, fields).catch(showError);
-      if (action === "export") exportCurrent(canvas, fields);
-      if (action === "reset-template") {
-        canvas.clear();
-        seedReadingTemplate(canvas);
-        updateLayerList(canvas);
-        updateInspector(canvas, fields);
+      if (action === "bring-forward") moveActive(canvas, "forward");
+      if (action === "send-backward") moveActive(canvas, "backward");
+      if (action === "bring-front") moveActive(canvas, "front");
+      if (action === "send-back") moveActive(canvas, "back");
+      if (action === "new-page") newPage(canvas, fields);
+      if (action === "save") saveCurrentDraft(canvas, fields).catch((error) => setStatus(fields, errorMessage(error), "error"));
+      if (action === "publish") publishCurrent(canvas, fields).catch((error) => setStatus(fields, errorMessage(error), "error"));
+      if (action === "previous-sheet-page" || action === "next-sheet-page") {
+        const sheet = bootstrap.sheets[getSheetIndex()];
+        if (!sheet) return;
+        const lastPage = Math.max(0, Math.ceil(sheet.items.length / SHEET_PAGE_SIZE) - 1);
+        const nextPage = action === "previous-sheet-page" ? Math.max(0, getSheetPage() - 1) : Math.min(lastPage, getSheetPage() + 1);
+        setSheetPage(nextPage);
+        refreshMaterialBrowser(bootstrap, canvas, getSheetIndex, getSheetPage, setSheetIndex, setSheetPage);
       }
     });
   });
 
-  document.querySelectorAll<HTMLButtonElement>("[data-asset-id]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const assetId = button.dataset.assetId;
-      if (assetId) addAsset(canvas, assetId, button.dataset.assetSrc).catch(showError);
-    });
-  });
-
   document.querySelector<HTMLInputElement>("[data-action='upload-image']")?.addEventListener("change", (event) => {
-    const input = event.currentTarget as HTMLInputElement | null;
-    const file = input?.files?.[0];
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
     if (file) {
-      addImage(canvas, file, fields.slug.value).catch(showError);
+      addUserImage(canvas, file).catch((error) => setStatus(fields, errorMessage(error), "error"));
       input.value = "";
     }
   });
-
-  bindAssetFilters();
-  bindInspector(canvas, fields);
 }
 
-function bindCanvasState(canvas: Canvas, fields: StudioFields) {
+function bindCanvasState(canvas: Canvas, fields: StudioFields, defaults: TextDefaults) {
   const refresh = () => {
-    updateLayerList(canvas);
-    updateInspector(canvas, fields);
+    updateLayerList(canvas, fields);
+    updateInspector(canvas, fields, defaults);
   };
   canvas.on("selection:created", refresh);
   canvas.on("selection:updated", refresh);
@@ -169,557 +287,277 @@ function bindCanvasState(canvas: Canvas, fields: StudioFields) {
   canvas.on("object:removed", refresh);
   canvas.on("text:changed", () => {
     const active = canvas.getActiveObject() as StudioObject | undefined;
-    if (active?.journalMeta && "text" in active) {
-      active.journalMeta.text = active.text;
-      active.journalMeta.label = active.text?.slice(0, 18) || active.journalMeta.label;
+    if (active?.journalMeta && typeof active.text === "string") {
+      active.journalMeta.label = active.text.replace(/\s+/g, " ").trim().slice(0, 18) || "文字";
     }
     refresh();
   });
 }
 
-function bindAssetFilters() {
-  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-category-button]"));
-  const assets = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-asset-id]"));
-  const search = document.querySelector<HTMLInputElement>("[data-asset-search]");
-  let category = buttons.find((button) => button.classList.contains("active"))?.dataset.categoryButton ?? "胶带";
-
-  const apply = () => {
-    const query = search?.value.trim().toLowerCase() ?? "";
-    assets.forEach((asset) => {
-      const matchesCategory = asset.dataset.category === category || category === "我的导入";
-      const matchesSearch = !query || (asset.dataset.search ?? "").toLowerCase().includes(query);
-      asset.hidden = !matchesCategory || !matchesSearch;
-    });
-  };
-
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      category = button.dataset.categoryButton ?? category;
-      buttons.forEach((item) => item.classList.toggle("active", item === button));
-      apply();
-    });
-  });
-  search?.addEventListener("input", apply);
-  apply();
-}
-
-function bindInspector(canvas: Canvas, fields: StudioFields) {
-  const inputs = [fields.selectedX, fields.selectedY, fields.selectedWidth, fields.selectedAngle];
-  inputs.forEach((input) => {
-    input.addEventListener("change", () => {
+function bindInspector(canvas: Canvas, fields: StudioFields, defaults: TextDefaults) {
+  [fields.selectedX, fields.selectedY, fields.selectedWidth, fields.selectedAngle, fields.selectedOpacity].forEach((input) => {
+    input.addEventListener("input", () => {
       const active = canvas.getActiveObject() as StudioObject | undefined;
-      if (!active || active.journalMeta?.locked) {
-        return;
-      }
+      if (!active) return;
       const value = Number(input.value);
-      if (!Number.isFinite(value)) {
-        return;
-      }
+      if (!Number.isFinite(value)) return;
       const field = input.dataset.transformField;
       if (field === "x") active.set("left", value);
       if (field === "y") active.set("top", value);
       if (field === "angle") active.set("angle", value);
+      if (field === "opacity") active.set("opacity", Math.max(0.1, Math.min(1, value)));
       if (field === "width") {
-        const baseWidth = active.width || value;
-        active.set("scaleX", value / baseWidth);
+        active.set("scaleX", Math.max(8, value) / Math.max(1, active.width ?? value));
       }
       active.setCoords();
-      canvas.renderAll();
-      updateLayerList(canvas);
-      updateInspector(canvas, fields);
+      canvas.requestRenderAll();
+      updateLayerList(canvas, fields);
+      updateInspector(canvas, fields, defaults);
     });
   });
+
+  const applyTextStyle = () => {
+    defaults.font = toTextFont(fields.textFont.value);
+    defaults.fontSize = clampNumber(Number(fields.textSize.value), 10, 72, 22);
+    defaults.color = validHexColor(fields.textColor.value) ? fields.textColor.value : "#3d3a32";
+    defaults.align = toTextAlign(fields.textAlign.value);
+    const active = canvas.getActiveObject() as StudioObject | undefined;
+    if (!isTextObject(active)) return;
+    active.set({
+      fontFamily: textFontFamilies[defaults.font],
+      fontSize: defaults.fontSize,
+      fill: defaults.color,
+      textAlign: defaults.align,
+    });
+    const meta = active.journalMeta;
+    if (!meta) return;
+    active.journalMeta = {
+      ...meta,
+      textStyle: textStyleFromDefaults(defaults),
+    };
+    active.setCoords();
+    canvas.requestRenderAll();
+    updateInspector(canvas, fields, defaults);
+  };
+  fields.textFont.addEventListener("change", applyTextStyle);
+  fields.textSize.addEventListener("input", applyTextStyle);
+  fields.textColor.addEventListener("input", applyTextStyle);
+  fields.textAlign.addEventListener("change", applyTextStyle);
 }
 
-function seedReadingTemplate(canvas: Canvas) {
-  createBookBackground(canvas);
-  addBookCover(canvas);
-  addMetaLabel(canvas, "04 / JOURNAL", 120, 88, 110, "#b0ad96");
-  addMetaLabel(canvas, "阅读笔记", 250, 91, 90, "#c2bcaa");
-  addTemplateText(canvas, "一间，只属于自己的房间", 368, 164, 220, 28, 18, "#171717", "书名字段");
-  addTemplateText(canvas, "伍尔夫", 370, 238, 160, 28, 18, "#171717", "作者字段");
-  addTemplateText(canvas, "小说 / 随笔", 370, 312, 160, 28, 18, "#171717", "类型字段");
-  addQuoteCard(canvas, {
-    left: 100,
-    top: 462,
-    text: "我希望，不必永远通过别人的方法，才懂得抵达自己的生活。",
-    width: 320,
-  });
-  addFavoriteQuote(canvas);
-  addPhotoPlaceholder(canvas);
-  addTemplateText(canvas, "读到这里，我想把当时的联想、电影截图和私人感受放在同一页。", 816, 500, 230, 110, 19, "#9a4e50", "右页手写评论", 2);
-  canvas.discardActiveObject();
-  canvas.renderAll();
-}
-
-function createBookBackground(canvas: Canvas) {
-  const leftPage = new Rect({
-    left: 44,
-    top: 34,
-    width: 514,
-    height: 728,
-    fill: "#fffdf7",
-    stroke: "#d8d2c5",
-    strokeWidth: 1,
-    rx: 20,
-    ry: 20,
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  leftPage.journalMeta = { id: "bg-left-page", type: "background", label: "左页背景", locked: true };
-
-  const rightPage = new Rect({
-    left: 562,
-    top: 34,
-    width: 514,
-    height: 728,
-    fill: "#fffdf7",
-    stroke: "#d8d2c5",
-    strokeWidth: 1,
-    rx: 20,
-    ry: 20,
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  rightPage.journalMeta = { id: "bg-right-page", type: "background", label: "右页背景", locked: true };
-
-  const spine = new Rect({
-    left: 548,
-    top: 34,
-    width: 24,
-    height: 728,
-    fill: "#ebe4d5",
-    stroke: "rgba(86, 76, 62, 0.22)",
-    strokeWidth: 1,
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  spine.journalMeta = { id: "bg-spine", type: "background", label: "书脊", locked: true };
-
-  canvas.add(leftPage, spine, rightPage);
-
-  for (let x = 62; x <= 1060; x += 18) {
-    addGridLine(canvas, x, 48, x, 748);
-  }
-  for (let y = 52; y <= 744; y += 18) {
-    addGridLine(canvas, 62, y, 540, y);
-    addGridLine(canvas, 580, y, 1058, y);
-  }
-
-  const leftShade = new Rect({
-    left: 522,
-    top: 36,
-    width: 36,
-    height: 724,
-    fill: "rgba(88, 74, 58, 0.07)",
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  leftShade.journalMeta = { id: "bg-left-shade", type: "background", label: "左页阴影", locked: true };
-  const rightShade = new Rect({
-    left: 562,
-    top: 36,
-    width: 34,
-    height: 724,
-    fill: "rgba(88, 74, 58, 0.07)",
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  rightShade.journalMeta = { id: "bg-right-shade", type: "background", label: "右页阴影", locked: true };
-  canvas.add(leftShade, rightShade);
-}
-
-function addGridLine(canvas: Canvas, left: number, top: number, x2: number, y2: number) {
-  const line = new Rect({
-    left,
-    top,
-    width: Math.max(1, x2 - left || 1),
-    height: Math.max(1, y2 - top || 1),
-    fill: "rgba(114, 134, 117, 0.13)",
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  line.journalMeta = { id: createId("grid"), type: "background", label: "格线", locked: true };
-  canvas.add(line);
-}
-
-function addBookCover(canvas: Canvas) {
-  const cover = new Rect({
-    left: 0,
-    top: 0,
-    width: 150,
-    height: 230,
-    fill: "#3b3440",
-    stroke: "rgba(42, 34, 28, 0.24)",
-    strokeWidth: 1,
-  });
-  const slash = new Rect({
-    left: -16,
-    top: 124,
-    width: 184,
-    height: 24,
-    fill: "#d5d05d",
-  });
-  const title = new FabricText("一间\\n只属于自己\\n的房间", {
-    left: 18,
-    top: 28,
-    fill: "#f7df97",
-    fontFamily: "Gaegu, PingFang SC, sans-serif",
-    fontSize: 24,
-    fontWeight: "bold",
-    lineHeight: 0.92,
-  });
-  const small = new FabricText("A room of\\none's own", {
-    left: 88,
-    top: 184,
-    fill: "#f2ce66",
-    fontFamily: "Georgia, serif",
-    fontSize: 14,
-    lineHeight: 0.95,
-  });
-  const group = new Group([cover, slash, title, small], { left: 104, top: 126, angle: 0 }) as StudioObject;
-  group.journalMeta = { id: createId("book-cover"), type: "frame", label: "书封占位", assetId: "field-book-cover" };
-  canvas.add(group);
-}
-
-function addMetaLabel(canvas: Canvas, text: string, left: number, top: number, width: number, fill: string) {
-  const label = new Textbox(text, {
-    left,
-    top,
-    width,
-    fontFamily: "JetBrains Mono, Menlo, monospace",
-    fontSize: 16,
-    fill,
-    fontWeight: "bold",
-    selectable: false,
-    evented: false,
-  }) as StudioObject;
-  label.journalMeta = { id: createId("bg-label"), type: "background", label: "页眉", locked: true };
-  canvas.add(label);
-}
-
-function addTemplateText(
+function renderMaterialBrowser(
+  bootstrap: StudioBootstrap,
   canvas: Canvas,
-  text: string,
-  left: number,
-  top: number,
-  width: number,
-  height: number,
-  fontSize: number,
-  fill: string,
-  label: string,
-  angle = 0,
+  getSheetIndex: () => number,
+  getSheetPage: () => number,
+  setSheetIndex: (index: number) => void,
+  setSheetPage: (page: number) => void,
 ) {
-  const object = new Textbox(text, {
-    left,
-    top,
-    width,
-    height,
-    angle,
-    fontFamily: "Gaegu, PingFang SC, sans-serif",
-    fontSize,
-    fill,
-    fontWeight: "bold",
-    splitByGrapheme: true,
-  }) as StudioObject;
-  object.journalMeta = { id: createId("text"), type: "text", label, text };
-  canvas.add(object);
+  refreshMaterialBrowser(bootstrap, canvas, getSheetIndex, getSheetPage, setSheetIndex, setSheetPage);
 }
 
-function addFavoriteQuote(canvas: Canvas) {
-  const card = new Rect({
-    left: 0,
-    top: 0,
-    width: 360,
-    height: 174,
-    fill: "rgba(245, 246, 238, 0.94)",
-    stroke: "rgba(157, 170, 124, 0.48)",
-    strokeWidth: 1,
-  });
-  const side = new Rect({
-    left: 0,
-    top: 0,
-    width: 6,
-    height: 174,
-    fill: "#aeb98b",
-  });
-  const quote = new Textbox("伟大的灵魂\\n是雌雄同体。", {
-    left: 42,
-    top: 26,
-    width: 260,
-    fill: "#a291ca",
-    fontFamily: "Ma Shan Zheng, Gaegu, PingFang SC, cursive",
-    fontSize: 34,
-    lineHeight: 1.03,
-  });
-  const body = new Textbox("这句像一枚书签，夹在独立和自由之间。", {
-    left: 42,
-    top: 116,
-    width: 280,
-    fill: "#5a3f3a",
-    fontFamily: "Gaegu, PingFang SC, sans-serif",
-    fontSize: 19,
-  });
-  const group = new Group([card, side, quote, body], { left: 640, top: 118 }) as StudioObject;
-  group.journalMeta = { id: createId("quote"), type: "note", label: "右页摘抄卡", assetId: "field-quote-card" };
-  canvas.add(group);
-}
-
-function addPhotoPlaceholder(canvas: Canvas) {
-  const photo = new Rect({
-    left: 0,
-    top: 0,
-    width: 248,
-    height: 142,
-    fill: "#2d4038",
-    stroke: "#f1e5d4",
-    strokeWidth: 8,
-    angle: -1,
-  });
-  const label = new FabricText("可替换图片", {
-    left: 68,
-    top: 58,
-    fill: "#fffaf2",
-    fontFamily: "PingFang SC, sans-serif",
-    fontSize: 18,
-    fontWeight: "bold",
-  });
-  const group = new Group([photo, label], { left: 664, top: 348, angle: -1 }) as StudioObject;
-  group.journalMeta = { id: createId("photo-frame"), type: "frame", label: "图片框", assetId: "field-photo-frame" };
-  canvas.add(group);
-}
-
-function addText(canvas: Canvas, options: { left?: number; top?: number; text?: string } = {}) {
-  const text = options.text ?? "双击编辑文字";
-  const object = new Textbox(text, {
-    left: options.left ?? 660,
-    top: options.top ?? 610,
-    width: 260,
-    fontFamily: "Gaegu, Ma Shan Zheng, PingFang SC, cursive",
-    fontSize: 26,
-    fill: "#2f2646",
-    backgroundColor: "rgba(255, 255, 255, 0.66)",
-    padding: 8,
-    splitByGrapheme: true,
-  }) as StudioObject;
-  object.journalMeta = { id: createId("text"), type: "text", label: text.slice(0, 18), text };
-  canvas.add(object);
-  canvas.setActiveObject(object);
-  canvas.renderAll();
-}
-
-function addQuoteCard(
+function refreshMaterialBrowser(
+  bootstrap: StudioBootstrap,
   canvas: Canvas,
-  options: { left?: number; top?: number; width?: number; text?: string } = {},
+  getSheetIndex: () => number,
+  getSheetPage: () => number,
+  setSheetIndex: (index: number) => void,
+  setSheetPage: (page: number) => void,
 ) {
-  const width = options.width ?? 310;
-  const text = options.text ?? "把喜欢的句子贴在这里。";
-  const card = new Rect({
-    width,
-    height: 110,
-    fill: "#f2e4d2",
-    stroke: "rgba(138, 104, 72, 0.18)",
-    strokeWidth: 1,
-  });
-  const tape = new Rect({
-    left: 22,
-    top: -11,
-    width: 94,
-    height: 18,
-    fill: "rgba(229, 215, 199, 0.74)",
-    angle: -3,
-  });
-  const label = new Textbox(text, {
-    left: 24,
-    top: 24,
-    width: width - 48,
-    fill: "#934b47",
-    fontFamily: "Gaegu, PingFang SC, sans-serif",
-    fontSize: 21,
-    fontWeight: "bold",
-    lineHeight: 1.28,
-  });
-  const group = new Group([card, tape, label], {
-    left: options.left ?? 710,
-    top: options.top ?? 560,
-    angle: -1,
-  }) as StudioObject;
-  group.journalMeta = { id: createId("quote-card"), type: "note", label: "摘抄卡", assetId: "field-quote-card", text };
-  canvas.add(group);
-  canvas.setActiveObject(group);
-  canvas.renderAll();
-}
+  const tabs = document.querySelector<HTMLElement>("[data-sheet-tabs]");
+  const grid = document.querySelector<HTMLElement>("[data-material-grid]");
+  const pageLabel = document.querySelector<HTMLElement>("[data-sheet-page-label]");
+  const source = document.querySelector<HTMLElement>("[data-material-source]");
+  const count = document.querySelector<HTMLElement>("[data-sheet-count]");
+  const previous = document.querySelector<HTMLButtonElement>("[data-action='previous-sheet-page']");
+  const next = document.querySelector<HTMLButtonElement>("[data-action='next-sheet-page']");
+  if (!tabs || !grid || !pageLabel || !source || !count || !previous || !next) return;
 
-async function addAsset(canvas: Canvas, assetId: string, runtimeSrc?: string) {
-  const asset = getJournalAsset(assetId);
-  if (!asset || asset.kind === "paper") {
+  tabs.replaceChildren();
+  bootstrap.sheets.forEach((sheet, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = index === getSheetIndex() ? "active" : "";
+    button.textContent = sheet.name;
+    button.addEventListener("click", () => {
+      setSheetIndex(index);
+      setSheetPage(0);
+      refreshMaterialBrowser(bootstrap, canvas, getSheetIndex, getSheetPage, setSheetIndex, setSheetPage);
+    });
+    tabs.append(button);
+  });
+
+  const sheet = bootstrap.sheets[getSheetIndex()];
+  if (!sheet) {
+    count.textContent = "0 sheets";
+    pageLabel.textContent = "还没有素材 Sheet";
+    source.textContent = "请在 public/assets/life-journal/sheets 中添加有许可记录的素材。";
+    grid.replaceChildren();
+    previous.disabled = true;
+    next.disabled = true;
     return;
   }
-  const object = asset.src ? await makeImageAsset(asset, runtimeSrc ?? asset.src) : makeShapeAsset(asset);
-  object.journalMeta = {
-    id: createId(asset.kind),
-    type: asset.kind === "field" ? "frame" : asset.kind === "sticker" || asset.kind === "tape" || asset.kind === "note" || asset.kind === "stamp" || asset.kind === "frame" ? asset.kind : "frame",
-    label: asset.name,
-    assetId: asset.id,
-    text: asset.defaultText,
-    src: asset.src,
-    alt: asset.name,
-  };
-  canvas.add(object);
-  canvas.setActiveObject(object);
-  canvas.renderAll();
+
+  const pageCount = Math.max(1, Math.ceil(sheet.items.length / SHEET_PAGE_SIZE));
+  const page = Math.min(getSheetPage(), pageCount - 1);
+  if (page !== getSheetPage()) setSheetPage(page);
+  const items = sheet.items.slice(page * SHEET_PAGE_SIZE, page * SHEET_PAGE_SIZE + SHEET_PAGE_SIZE);
+  count.textContent = `${sheet.items.length} items`;
+  pageLabel.textContent = `${page + 1} / ${pageCount}`;
+  source.textContent = `${sheet.source.provider} · ${sheet.category} · ${sheet.source.licenseNote}`;
+  previous.disabled = page === 0;
+  next.disabled = page === pageCount - 1;
+  grid.replaceChildren();
+  items.forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "material-item";
+    button.title = `${item.name}，来源：${sheet.source.provider}`;
+    const image = document.createElement("img");
+    image.src = withBasePath(bootstrap.base, item.src);
+    image.alt = "";
+    image.loading = "lazy";
+    const label = document.createElement("span");
+    label.textContent = item.name;
+    button.append(image, label);
+    button.addEventListener("click", () => {
+      addMaterial(canvas, item, sheet, bootstrap.base).catch((error) => {
+        const fields = getFields();
+        setStatus(fields, errorMessage(error), "error");
+      });
+    });
+    grid.append(button);
+  });
 }
 
-async function makeImageAsset(asset: JournalAsset, runtimeSrc: string) {
-  const image = (await FabricImage.fromURL(runtimeSrc)) as StudioObject;
+async function addMaterial(canvas: Canvas, item: MaterialItem, sheet: MaterialSheet, base: string) {
+  const image = (await FabricImage.fromURL(withBasePath(base, item.src))) as StudioObject;
+  const placement = fitInto(image.width ?? sheet.defaultPlacement.width, image.height ?? sheet.defaultPlacement.height, sheet.defaultPlacement.width, sheet.defaultPlacement.height);
+  const position = nextPosition(canvas);
   image.set({
-    left: 650 + Math.random() * 180,
-    top: 310 + Math.random() * 220,
-    scaleX: asset.defaultWidth / (image.width || asset.defaultWidth),
-    scaleY: asset.defaultHeight / (image.height || asset.defaultHeight),
-    angle: Math.random() * 5 - 2,
+    left: position.left,
+    top: position.top,
+    scaleX: placement.scaleX,
+    scaleY: placement.scaleY,
+    angle: sheet.defaultPlacement.rotation,
   });
-  return image;
+  image.journalMeta = {
+    id: createId("material"),
+    type: "sticker",
+    label: item.name,
+    assetId: item.id,
+    src: item.src,
+    alt: item.name,
+  };
+  canvas.add(image);
+  canvas.setActiveObject(image);
+  canvas.requestRenderAll();
 }
 
-function makeShapeAsset(asset: JournalAsset) {
-  const left = 650 + Math.random() * 180;
-  const top = 320 + Math.random() * 200;
-  if (asset.kind === "tape") {
-    return new Rect({
-      left,
-      top,
-      width: asset.defaultWidth,
-      height: asset.defaultHeight,
-      fill: asset.id.includes("blue") ? "#92d8e6" : "#f69ac5",
-      stroke: "rgba(69, 54, 82, 0.22)",
-      strokeWidth: 1,
-      rx: 5,
-      ry: 5,
-      angle: -5,
-    }) as StudioObject;
+async function addUserImage(canvas: Canvas, file: File) {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("只支持图片文件。");
   }
-  if (asset.kind === "stamp") {
-    const rect = new Rect({
-      width: asset.defaultWidth,
-      height: asset.defaultHeight,
-      fill: "rgba(255, 255, 255, 0.2)",
-      stroke: "#c967a0",
-      strokeWidth: 2,
-      rx: 6,
-      ry: 6,
-    });
-    const label = new FabricText(asset.defaultText ?? asset.name, {
-      left: 12,
-      top: 12,
-      fontSize: 14,
-      fontFamily: "Menlo, Consolas, monospace",
-      fill: "#6d3761",
-      fontWeight: "bold",
-    });
-    return new Group([rect, label], { left, top }) as StudioObject;
+  if (file.size > MAX_LOCAL_IMAGE_BYTES) {
+    throw new Error("单张上传图片不能超过 7 MB。请压缩后重试。");
   }
-  if (asset.kind === "frame" || asset.kind === "field") {
-    const rect = new Rect({
-      width: asset.defaultWidth,
-      height: asset.defaultHeight,
-      fill: asset.id.includes("photo") ? "rgba(45, 64, 56, 0.74)" : "rgba(255, 255, 255, 0.42)",
-      stroke: asset.id.includes("photo") ? "#f1e5d4" : "#cbbda9",
-      strokeWidth: asset.id.includes("photo") ? 8 : 2,
-      rx: 4,
-      ry: 4,
-    });
-    const label = new FabricText(asset.defaultText ?? asset.name, {
-      left: 16,
-      top: 18,
-      fontSize: 18,
-      fontFamily: "Gaegu, PingFang SC, sans-serif",
-      fill: asset.id.includes("photo") ? "#fffaf2" : "#5f5143",
-      fontWeight: "bold",
-    });
-    return new Group([rect, label], { left, top }) as StudioObject;
-  }
-  const rect = new Rect({
-    width: asset.defaultWidth,
-    height: asset.defaultHeight,
-    fill: asset.id.includes("mint") ? "#d7f9ed" : "#ffd7eb",
-    stroke: "#ffffff",
-    strokeWidth: 2,
-    rx: 8,
-    ry: 8,
-  });
-  const label = new FabricText(asset.defaultText ?? asset.name, {
-    left: 16,
-    top: 18,
-    width: asset.defaultWidth - 32,
-    fontSize: 16,
-    fontFamily: "Gaegu, PingFang SC, sans-serif",
-    fill: "#2d3148",
-    fontWeight: "bold",
-  });
-  return new Group([rect, label], { left, top }) as StudioObject;
-}
-
-async function addImage(canvas: Canvas, file: File, slug: string) {
   const dataUrl = await readFileAsDataUrl(file);
   const image = (await FabricImage.fromURL(dataUrl)) as StudioObject;
-  image.set({
-    left: 660,
-    top: 348,
-    scaleX: 250 / (image.width || 250),
-    scaleY: 170 / (image.height || 170),
-    angle: -2,
-  });
+  const placement = fitInto(image.width ?? 180, image.height ?? 180, 220, 180);
+  const position = nextPosition(canvas);
+  image.set({ left: position.left, top: position.top, scaleX: placement.scaleX, scaleY: placement.scaleY, angle: -2 });
   image.journalMeta = {
     id: createId("photo"),
     type: "image",
     label: file.name,
-    src: `/assets/life/${safeSlug(slug)}/photo-1.webp`,
+    src: dataUrl,
     alt: file.name,
   };
   canvas.add(image);
   canvas.setActiveObject(image);
-  canvas.renderAll();
+  canvas.requestRenderAll();
 }
 
-function readFileAsDataUrl(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+function addText(canvas: Canvas, defaults: TextDefaults) {
+  const position = nextPosition(canvas);
+  const object = new Textbox("双击编辑文字", {
+    left: position.left,
+    top: position.top,
+    width: 180,
+    fontFamily: textFontFamilies[defaults.font],
+    fontSize: defaults.fontSize,
+    fill: defaults.color,
+    textAlign: defaults.align,
+    lineHeight: 1.35,
+    splitByGrapheme: true,
+  }) as StudioObject;
+  object.journalMeta = {
+    id: createId("text"),
+    type: "text",
+    label: "双击编辑文字",
+    textStyle: textStyleFromDefaults(defaults),
+  };
+  canvas.add(object);
+  canvas.setActiveObject(object);
+  canvas.requestRenderAll();
+  setTimeout(() => (object as unknown as Textbox).enterEditing(), 0);
+}
+
+function nextPosition(canvas: Canvas) {
+  const count = canvas.getObjects().filter((object) => (object as StudioObject).journalMeta).length;
+  return { left: 56 + (count % 6) * 17, top: 74 + (count % 5) * 21 };
+}
+
+function fitInto(sourceWidth: number, sourceHeight: number, maxWidth: number, maxHeight: number) {
+  const scale = Math.min(maxWidth / Math.max(1, sourceWidth), maxHeight / Math.max(1, sourceHeight));
+  return { scaleX: scale, scaleY: scale };
+}
+
+async function duplicateActive(canvas: Canvas) {
+  const active = canvas.getActiveObject() as StudioObject | undefined;
+  const sourceMeta = active?.journalMeta;
+  if (!active || !sourceMeta) return;
+  const cloned = (await active.clone()) as StudioObject;
+  cloned.set({ left: (active.left ?? 0) + 14, top: (active.top ?? 0) + 14 });
+  cloned.journalMeta = {
+    ...sourceMeta,
+    id: createId(sourceMeta.type),
+    label: `${sourceMeta.label} 副本`,
+  };
+  canvas.add(cloned);
+  canvas.setActiveObject(cloned);
+  canvas.requestRenderAll();
 }
 
 function deleteActive(canvas: Canvas) {
-  const active = canvas.getActiveObject() as StudioObject | undefined;
-  if (active && !active.journalMeta?.locked) {
-    canvas.remove(active);
-    canvas.discardActiveObject();
-    canvas.renderAll();
-  }
+  const active = canvas.getActiveObject();
+  if (!active) return;
+  canvas.remove(active);
+  canvas.discardActiveObject();
+  canvas.requestRenderAll();
 }
 
-function bringActiveForward(canvas: Canvas) {
-  const active = canvas.getActiveObject() as StudioObject | undefined;
-  if (active && !active.journalMeta?.locked) {
-    canvas.bringObjectForward(active);
-    canvas.renderAll();
-    updateLayerList(canvas);
-  }
+function moveActive(canvas: Canvas, direction: "forward" | "backward" | "front" | "back") {
+  const active = canvas.getActiveObject();
+  if (!active) return;
+  if (direction === "forward") canvas.bringObjectForward(active);
+  if (direction === "backward") canvas.sendObjectBackwards(active);
+  if (direction === "front") canvas.bringObjectToFront(active);
+  if (direction === "back") canvas.sendObjectToBack(active);
+  canvas.requestRenderAll();
 }
 
-function sendActiveBackward(canvas: Canvas) {
-  const active = canvas.getActiveObject() as StudioObject | undefined;
-  if (active && !active.journalMeta?.locked) {
-    canvas.sendObjectBackwards(active);
-    canvas.renderAll();
-    updateLayerList(canvas);
+function newPage(canvas: Canvas, fields: StudioFields) {
+  if (canvas.getObjects().length && !window.confirm("清空当前 B5 画布并新建一页？未保存的内容会丢失。")) {
+    return;
   }
+  canvas.clear();
+  fields.publicLink.hidden = true;
+  setStatus(fields, "已新建一张空白 B5 页。", "info");
 }
 
 async function saveCurrentDraft(canvas: Canvas, fields: StudioFields) {
-  const layout = layoutFromCanvas(canvas, fields.slug.value);
+  const layout = layoutFromCanvas(canvas);
   await saveDraft({
     id: DRAFT_ID,
     updatedAt: new Date().toISOString(),
@@ -727,92 +565,119 @@ async function saveCurrentDraft(canvas: Canvas, fields: StudioFields) {
     canvasJson: (canvas.toJSON as (propertiesToInclude?: string[]) => unknown)(["journalMeta"]),
     layout,
   });
-  fields.output.value = "草稿已保存到当前浏览器。";
+  setStatus(fields, "草稿已保存到当前浏览器。", "success");
 }
 
-async function restoreLastDraft(canvas: Canvas, fields: StudioFields) {
+async function restoreLastDraft(canvas: Canvas, fields: StudioFields, defaults: TextDefaults) {
   const draftId = getLastDraftId();
-  if (!draftId) {
-    return;
-  }
+  if (!draftId) return;
   const draft = await loadDraft(draftId);
-  if (!draft || draft.id !== DRAFT_ID || draft.layout.page.size !== "b5-spread") {
+  if (!draft || draft.id !== DRAFT_ID) return;
+  if (draft.layout.page.size !== "b5" || draft.layout.page.orientation !== "portrait") {
+    setStatus(fields, "检测到旧版双页草稿，已保留但不自动载入。", "info");
     return;
   }
   writeMeta(fields, draft.meta);
-  await canvas.loadFromJSON(draft.canvasJson as string | Record<string, unknown>);
-  canvas.renderAll();
-  updateLayerList(canvas);
-  updateInspector(canvas, fields);
+  await canvas.loadFromJSON(draft.canvasJson as never);
+  canvas.requestRenderAll();
+  updateLayerList(canvas, fields);
+  updateInspector(canvas, fields, defaults);
+  setStatus(fields, "已恢复当前浏览器中的 B5 草稿。", "success");
 }
 
-function exportCurrent(canvas: Canvas, fields: StudioFields) {
-  const meta = readMeta(fields);
-  const slug = safeSlug(meta.slug);
-  const layout = layoutFromCanvas(canvas, slug);
-  const tags = meta.tags
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-  const tagYaml = tags.map((tag) => `  - ${tag}`).join("\n");
-  const markdown = `---\ntitle: "${escapeYaml(meta.title)}"\ndate: ${meta.date}\nsummary: "${escapeYaml(meta.summary)}"\ntags:\n${tagYaml || "  - 读书"}\nmood: "${escapeYaml(meta.mood)}"\nlocation: "${escapeYaml(meta.location)}"\nbookTitle: "${escapeYaml(meta.bookTitle ?? "")}"\nauthor: "${escapeYaml(meta.author ?? "")}"\njournalLayout: "/assets/life/${slug}/layout.json"\n---\n\n${meta.body.trim()}\n`;
-  const json = JSON.stringify(layout, null, 2);
-  fields.output.value = `# src/content/life/${slug}.md\n\n${markdown}\n# public/assets/life/${slug}/layout.json\n\n${json}`;
+async function publishCurrent(canvas: Canvas, fields: StudioFields) {
+  const payload = {
+    meta: readMeta(fields),
+    layout: layoutFromCanvas(canvas),
+  };
+  setStatus(fields, "正在写入本地公开页面…", "info");
+  let response = await sendPublish(payload, false);
+  if (response.status === 409) {
+    const conflict = await response.json() as { error?: string };
+    if (!window.confirm(`${conflict.error ?? "该 slug 已存在。"}\n\n继续会覆盖这张 Studio 生成的公开页面。`)) {
+      setStatus(fields, "已取消发布。", "info");
+      return;
+    }
+    response = await sendPublish(payload, true);
+  }
+  const result = await response.json() as { error?: string; publicPath?: string; overwritten?: boolean };
+  if (!response.ok || !result.publicPath) {
+    throw new Error(result.error ?? "发布失败。");
+  }
+  fields.publicLink.href = result.publicPath;
+  fields.publicLink.hidden = false;
+  fields.publicLink.textContent = "查看公开页面";
+  setStatus(fields, result.overwritten ? "已覆盖并发布公开页面。" : "已发布公开页面。", "success");
 }
 
-function layoutFromCanvas(canvas: Canvas, slug: string): JournalLayout {
-  const elements = canvas
-    .getObjects()
-    .filter((object) => {
-      const meta = (object as StudioObject).journalMeta;
-      return meta && !meta.locked && meta.type !== "background";
-    })
-    .map((object, index) => objectToElement(object as StudioObject, index, slug));
+function sendPublish(payload: { meta: JournalDraftMeta; layout: JournalLayout }, overwrite: boolean) {
+  return fetch(withBasePath(readBootstrap().base, "/__journal_publish"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, overwrite }),
+  });
+}
+
+function layoutFromCanvas(canvas: Canvas): JournalLayout {
+  const elements = canvas.getObjects().map((object, index) => objectToElement(object as StudioObject, index));
   return {
-    version: 2,
+    version: 3,
     page: {
-      size: "b5-spread",
-      orientation: "landscape",
-      theme: "reading-journal-spread",
+      size: "b5",
+      orientation: "portrait",
+      theme: "reading-journal-b5",
     },
     elements,
   };
 }
 
-function objectToElement(object: StudioObject, index: number, slug: string): JournalElement {
+function objectToElement(object: StudioObject, index: number): JournalElement {
   const meta = object.journalMeta;
-  const scaledWidth = Math.round((object.width ?? 0) * (object.scaleX ?? 1));
-  const scaledHeight = Math.round((object.height ?? 0) * (object.scaleY ?? 1));
-  const type = meta?.type === "background" ? "frame" : meta?.type ?? "text";
-  const text = type === "text" ? object.text : meta?.text;
+  const type = meta?.type ?? "sticker";
+  const width = Math.max(8, Math.round((object.width ?? 0) * (object.scaleX ?? 1)));
+  const height = Math.max(8, Math.round((object.height ?? 0) * (object.scaleY ?? 1)));
   return {
     id: meta?.id ?? createId("element"),
     type,
     assetId: meta?.assetId,
-    text,
-    src: meta?.src?.replace("/reading-journal-page/", `/${safeSlug(slug)}/`),
+    src: meta?.src,
     alt: meta?.alt,
+    text: isTextObject(object) ? object.text : undefined,
+    textStyle: isTextObject(object) ? textStyleFromObject(object, meta?.textStyle) : undefined,
     x: Math.round(object.left ?? 0),
     y: Math.round(object.top ?? 0),
-    width: Math.max(24, scaledWidth),
-    height: Math.max(24, scaledHeight),
+    width,
+    height,
     rotation: Math.round(object.angle ?? 0),
-    zIndex: index + 5,
+    opacity: roundOpacity(object.opacity ?? 1),
+    zIndex: index + 1,
   };
+}
+
+function textStyleFromObject(object: StudioObject, fallback?: JournalTextStyle): JournalTextStyle {
+  return {
+    font: fontKeyForFamily(object.fontFamily) ?? fallback?.font ?? "serif",
+    fontSize: clampNumber(Number(object.fontSize), 10, 72, fallback?.fontSize ?? 22),
+    color: validHexColor(object.fill) ? object.fill : fallback?.color ?? "#3d3a32",
+    align: toTextAlign(object.textAlign ?? fallback?.align ?? "left"),
+    lineHeight: clampNumber(Number(object.lineHeight), 0.8, 2.4, fallback?.lineHeight ?? 1.35),
+  };
+}
+
+function textStyleFromDefaults(defaults: TextDefaults): JournalTextStyle {
+  return { font: defaults.font, fontSize: defaults.fontSize, color: defaults.color, align: defaults.align, lineHeight: 1.35 };
 }
 
 function readMeta(fields: StudioFields): JournalDraftMeta {
   return {
-    title: fields.title.value,
+    title: fields.title.value.trim() || "新的读书手帐页",
     date: fields.date.value,
-    summary: fields.summary.value,
+    summary: fields.summary.value.trim() || "一张新的读书手帐页。",
     tags: fields.tags.value,
-    mood: fields.mood.value,
-    location: fields.location.value,
+    mood: fields.mood.value.trim(),
+    location: fields.location.value.trim(),
     slug: safeSlug(fields.slug.value),
     body: fields.body.value,
-    bookTitle: fields.bookTitle.value,
-    author: fields.author.value,
   };
 }
 
@@ -825,60 +690,82 @@ function writeMeta(fields: StudioFields, meta: JournalDraftMeta) {
   fields.location.value = meta.location;
   fields.slug.value = meta.slug;
   fields.body.value = meta.body;
-  fields.bookTitle.value = meta.bookTitle ?? "一间，只属于自己的房间";
-  fields.author.value = meta.author ?? "伍尔夫";
 }
 
-function updateLayerList(canvas: Canvas) {
+function updateLayerList(canvas: Canvas, fields: StudioFields) {
   const container = document.querySelector<HTMLElement>("[data-layer-list]");
-  if (!container) {
-    return;
-  }
-  const active = canvas.getActiveObject() as StudioObject | undefined;
-  const objects = canvas
-    .getObjects()
-    .filter((object) => {
-      const meta = (object as StudioObject).journalMeta;
-      return meta && !meta.locked && meta.type !== "background";
-    })
-    .reverse() as StudioObject[];
-
+  if (!container) return;
+  const active = canvas.getActiveObject();
+  const objects = [...canvas.getObjects()].reverse() as StudioObject[];
   if (!objects.length) {
-    container.innerHTML = "<p>还没有可编辑图层。</p>";
+    container.replaceChildren();
+    const message = document.createElement("p");
+    message.textContent = "画布还是空白的。";
+    container.append(message);
     return;
   }
-
-  container.innerHTML = "";
+  container.replaceChildren();
   objects.forEach((object, index) => {
-    const meta = object.journalMeta;
     const button = document.createElement("button");
     button.type = "button";
-    button.dataset.layerId = meta?.id ?? "";
     button.classList.toggle("active", object === active);
-    button.innerHTML = `<span class=\"layer-index\">${String(index + 1).padStart(2, "0")}</span><span>${escapeHtml(meta?.label ?? "未命名图层")}</span>`;
+    const position = document.createElement("span");
+    position.className = "layer-index";
+    position.textContent = String(index + 1).padStart(2, "0");
+    const label = document.createElement("span");
+    label.textContent = object.journalMeta?.label ?? "未命名对象";
+    button.append(position, label);
     button.addEventListener("click", () => {
       canvas.setActiveObject(object);
-      canvas.renderAll();
-      updateLayerList(canvas);
-      const fields = getFields();
-      updateInspector(canvas, fields);
+      canvas.requestRenderAll();
+      updateLayerList(canvas, fields);
+      updateInspector(canvas, fields, {
+        font: toTextFont(fields.textFont.value),
+        fontSize: clampNumber(Number(fields.textSize.value), 10, 72, 22),
+        color: fields.textColor.value,
+        align: toTextAlign(fields.textAlign.value),
+      });
     });
     container.append(button);
   });
 }
 
-function updateInspector(canvas: Canvas, fields: StudioFields) {
+function updateInspector(canvas: Canvas, fields: StudioFields, defaults: TextDefaults) {
   const active = canvas.getActiveObject() as StudioObject | undefined;
-  const locked = !active || active.journalMeta?.locked;
-  fields.selectedName.value = locked ? "未选择" : active.journalMeta?.label ?? "未命名";
-  fields.selectedX.value = locked ? "" : String(Math.round(active.left ?? 0));
-  fields.selectedY.value = locked ? "" : String(Math.round(active.top ?? 0));
-  fields.selectedWidth.value = locked ? "" : String(Math.round((active.width ?? 0) * (active.scaleX ?? 1)));
-  fields.selectedAngle.value = locked ? "" : String(Math.round(active.angle ?? 0));
+  fields.selectedName.value = active?.journalMeta?.label ?? "未选择";
+  fields.selectedX.value = active ? String(Math.round(active.left ?? 0)) : "";
+  fields.selectedY.value = active ? String(Math.round(active.top ?? 0)) : "";
+  fields.selectedWidth.value = active ? String(Math.round((active.width ?? 0) * (active.scaleX ?? 1))) : "";
+  fields.selectedAngle.value = active ? String(Math.round(active.angle ?? 0)) : "";
+  fields.selectedOpacity.value = active ? String(roundOpacity(active.opacity ?? 1)) : "1";
+
+  const textStyle = isTextObject(active) ? textStyleFromObject(active, active.journalMeta?.textStyle) : textStyleFromDefaults(defaults);
+  fields.textFont.value = textStyle.font ?? defaults.font;
+  fields.textSize.value = String(textStyle.fontSize ?? defaults.fontSize);
+  fields.textColor.value = textStyle.color ?? defaults.color;
+  fields.textAlign.value = textStyle.align ?? defaults.align;
+}
+
+function isTextObject(object: StudioObject | undefined): object is StudioObject & { text: string } {
+  return Boolean(object && object.journalMeta?.type === "text" && typeof object.text === "string");
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function withBasePath(base: string, path: string) {
+  const normalizedBase = base === "/" ? "" : base.replace(/\/$/, "");
+  return `${normalizedBase}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 function createId(prefix: string) {
-  return `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
+  return `${prefix}-${crypto.randomUUID?.() ?? Math.random().toString(36).slice(2, 10)}`;
 }
 
 function safeSlug(value: string) {
@@ -889,22 +776,40 @@ function safeSlug(value: string) {
     .replace(/^-+|-+$/g, "") || "reading-journal-page";
 }
 
-function escapeYaml(value: string) {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+function validHexColor(value: unknown): value is string {
+  return typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+function toTextFont(value: string): JournalTextFont {
+  return value === "sans" || value === "wenkai" || value === "hand" ? value : "serif";
 }
 
-function showError(error: unknown) {
-  const message = error instanceof Error ? error.message : String(error);
-  const output = document.getElementById("journal-export");
-  if (output instanceof HTMLTextAreaElement) {
-    output.value = `操作失败：${message}`;
-  }
+function toTextAlign(value: string): "left" | "center" | "right" {
+  return value === "center" || value === "right" ? value : "left";
+}
+
+function fontKeyForFamily(value: string | undefined): JournalTextFont | null {
+  if (!value) return null;
+  if (value.includes("Noto Sans")) return "sans";
+  if (value.includes("LXGW")) return "wenkai";
+  if (value.includes("Ma Shan")) return "hand";
+  if (value.includes("Noto Serif")) return "serif";
+  return null;
+}
+
+function clampNumber(value: number, min: number, max: number, fallback: number) {
+  return Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
+}
+
+function roundOpacity(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function setStatus(fields: StudioFields, message: string, state: "info" | "success" | "error") {
+  fields.status.textContent = message;
+  fields.status.dataset.state = state;
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "操作失败。";
 }

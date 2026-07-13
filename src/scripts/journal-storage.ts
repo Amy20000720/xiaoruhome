@@ -1,7 +1,7 @@
 import type { JournalLayout } from "../lib/journalLayout";
 
 const DB_NAME = "xiaoru-life-journal";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = "drafts";
 const LAST_DRAFT_KEY = "xiaoru-life-journal:last-draft";
 

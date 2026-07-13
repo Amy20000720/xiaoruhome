@@ -2,6 +2,15 @@ import { readFile } from "node:fs/promises";
 import { join, normalize } from "node:path";
 
 export type JournalElementType = "text" | "image" | "sticker" | "tape" | "note" | "stamp" | "frame";
+export type JournalTextFont = "serif" | "sans" | "wenkai" | "hand";
+
+export interface JournalTextStyle {
+  font?: JournalTextFont;
+  fontSize?: number;
+  color?: string;
+  align?: "left" | "center" | "right";
+  lineHeight?: number;
+}
 
 export interface JournalElement {
   id: string;
@@ -17,12 +26,14 @@ export interface JournalElement {
   src?: string;
   alt?: string;
   assetId?: string;
+  opacity?: number;
+  textStyle?: JournalTextStyle;
 }
 
 export interface JournalLayout {
   version: number;
   page: {
-    size: "a5" | "b5-spread";
+    size: "a5" | "b5" | "b5-spread";
     orientation: "portrait" | "landscape";
     theme: string;
   };

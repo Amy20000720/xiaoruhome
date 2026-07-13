@@ -20,6 +20,20 @@ const classNames = [
   asset?.className,
 ].filter(Boolean);
 
+const fontFamilies = {
+  serif: '"Noto Serif SC", "Songti SC", STSong, serif',
+  sans: '"Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif',
+  wenkai: '"LXGW WenKai", KaiTi, STKaiti, cursive',
+  hand: '"Ma Shan Zheng", KaiTi, STKaiti, cursive',
+};
+const textStyle = element.textStyle;
+const textFont = textStyle?.font && textStyle.font in fontFamilies ? fontFamilies[textStyle.font] : fontFamilies.serif;
+const textSize = Math.max(10, Math.min(72, textStyle?.fontSize ?? 22));
+const textColor = /^#[0-9a-f]{6}$/i.test(textStyle?.color ?? "") ? textStyle?.color : "#3d3a32";
+const textAlign = textStyle?.align === "center" || textStyle?.align === "right" ? textStyle.align : "left";
+const textLineHeight = Math.max(0.8, Math.min(2.4, textStyle?.lineHeight ?? 1.35));
+const opacity = Math.max(0.1, Math.min(1, element.opacity ?? 1));
+
 const style = [
   `--x: ${(element.x / JOURNAL_PAGE_WIDTH) * 100}%`,
   `--y: ${(element.y / JOURNAL_PAGE_HEIGHT) * 100}%`,
@@ -27,6 +41,12 @@ const style = [
   `--h: ${(element.height / JOURNAL_PAGE_HEIGHT) * 100}%`,
   `--r: ${element.rotation ?? 0}deg`,
   `--z: ${element.zIndex ?? 2}`,
+  `--journal-opacity: ${opacity}`,
+  `--journal-text-font: ${textFont}`,
+  `--journal-text-size: ${textSize}px`,
+  `--journal-text-color: ${textColor}`,
+  `--journal-text-align: ${textAlign}`,
+  `--journal-text-line-height: ${textLineHeight}`,
 ].join("; ");
 
 const imageSrc = element.src ? withBase(element.src) : "";
